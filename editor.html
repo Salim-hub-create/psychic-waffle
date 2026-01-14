@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Invoice Editor - Advanced</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+</head>
+<body>
+  <div class="topbar">
+    <div class="brand">Invoice Generator — Editor</div>
+    <div class="top-actions">
+      <button id="back-btn" class="btn">Back</button>
+      <button id="download-pdf" class="btn primary">Download (Ctrl+S)</button>
+    </div>
+  </div>
+
+  <main class="container">
+    <section class="editor-panel">
+      <div class="editor-toolbar">
+            <button data-cmd="bold" class="toolbar-btn">Bold</button>
+            <button data-cmd="italic" class="toolbar-btn">Italic</button>
+            <button data-cmd="underline" class="toolbar-btn">Underline</button>
+            <button id="save-server" class="toolbar-btn">Save to Server</button>
+            <button id="load-server" class="toolbar-btn">Load From Server</button>
+            <select id="server-invoices" style="flex:1;margin-left:8px"><option value="">— Select invoice —</option></select>
+          </div>
+          <div class="editor-help" style="padding:8px;background:#f7fbff;border:1px solid #e3f0ff;margin:8px 0;">
+            Tip: This is a simple editor. Click to edit text, delete/insert freely. Use <strong>Load From Server</strong> to open an existing invoice, then <strong>Save to Server</strong> to save changes.
+          </div>
+
+      <div id="doc" contenteditable="true" class="doc">
+        <h1 contenteditable="true">Invoice</h1>
+        <div class="meta">
+          <div contenteditable="true" id="from">From: Your Company\nAddress line</div>
+          <div contenteditable="true" id="to">To: Client Name\nClient Address</div>
+        </div>
+
+        <table id="items-table" class="items-table">
+          <thead><tr><th>Qty</th><th>Description</th><th>Price</th><th>Total</th><th></th></tr></thead>
+          <tbody></tbody>
+        </table>
+
+        <div class="totals">Total: <span id="total">0.00</span></div>
+      </div>
+    </section>
+
+    <aside class="preview-panel">
+      <h3>Preview</h3>
+      <div id="preview" class="preview"></div>
+    </aside>
+  </main>
+
+  <script src="editor.js"></script>
+</body>
+</html>

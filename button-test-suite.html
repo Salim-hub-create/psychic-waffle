@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Button Testing Suite - Invoice Generator</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; background: #f5f5f5; }
+        .test-container { max-width: 1200px; margin: 0 auto; }
+        .test-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
+        .back-btn { background: #6c757d; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; text-decoration: none; }
+        .back-btn:hover { background: #545b62; }
+        .test-section { background: white; margin: 20px 0; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .test-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
+        .test-title { font-size: 1.5em; font-weight: bold; color: #333; }
+        .test-status { padding: 5px 15px; border-radius: 20px; font-size: 0.9em; font-weight: bold; }
+        .status-pending { background: #fff3cd; color: #856404; }
+        .status-running { background: #cce5ff; color: #004085; }
+        .status-passed { background: #d4edda; color: #155724; }
+        .status-failed { background: #f8d7da; color: #721c24; }
+        .test-results { margin-top: 15px; }
+        .test-item { padding: 10px; margin: 5px 0; border-left: 4px solid #ddd; background: #f9f9f9; }
+        .test-item.pass { border-left-color: #28a745; }
+        .test-item.fail { border-left-color: #dc3545; }
+        .progress-bar { width: 100%; height: 20px; background: #e9ecef; border-radius: 10px; overflow: hidden; margin: 10px 0; }
+        .progress-fill { height: 100%; background: linear-gradient(90deg, #007bff, #28a745); transition: width 0.3s ease; }
+        .run-tests-btn { background: #007bff; color: white; border: none; padding: 12px 30px; border-radius: 6px; cursor: pointer; font-size: 1.1em; }
+        .run-tests-btn:hover { background: #0056b3; }
+        .run-tests-btn:disabled { background: #6c757d; cursor: not-allowed; }
+        .summary-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px; margin: 20px 0; }
+        .stat-card { background: #f8f9fa; padding: 15px; border-radius: 8px; text-align: center; }
+        .stat-number { font-size: 2em; font-weight: bold; color: #007bff; }
+        .stat-label { color: #6c757d; margin-top: 5px; }
+        .button-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; margin: 15px 0; }
+        .test-button { background: #f8f9fa; border: 1px solid #dee2e6; padding: 10px; border-radius: 6px; cursor: pointer; text-align: center; transition: all 0.2s ease; }
+        .test-button:hover { background: #e9ecef; border-color: #adb5bd; }
+        .test-button.working { background: #d4edda; border-color: #28a745; }
+        .test-button.broken { background: #f8d7da; border-color: #dc3545; }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <div class="test-header">
+            <a href="index.html" class="back-btn">← Back to Invoice Generator</a>
+            <h1>🔘 Button Testing Suite</h1>
+        </div>
+        <p>Comprehensive testing of all buttons and UI interactions in the invoice generator.</p>
+        
+        <div class="summary-stats">
+            <div class="stat-card">
+                <div class="stat-number" id="total-tests">0</div>
+                <div class="stat-label">Total Buttons</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="working-tests">0</div>
+                <div class="stat-label">Working</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="broken-tests">0</div>
+                <div class="stat-label">Broken</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="success-rate">0%</div>
+                <div class="stat-label">Success Rate</div>
+            </div>
+        </div>
+        
+        <div class="progress-bar">
+            <div class="progress-fill" id="progress-fill" style="width: 0%"></div>
+        </div>
+        
+        <button class="run-tests-btn" id="run-tests-btn" onclick="runAllTests()">🧪 Test All Buttons</button>
+        
+        <!-- Main Navigation Buttons -->
+        <div class="test-section">
+            <div class="test-header">
+                <div class="test-title">🧭 Main Navigation Buttons</div>
+                <div class="test-status status-pending" id="nav-status">Pending</div>
+            </div>
+            <div class="button-grid">
+                <div class="test-button" id="test-history-btn">📜 History</div>
+                <div class="test-button" id="test-client-db-btn">👥 Clients</div>
+                <div class="test-button" id="test-ai-suggest-btn">🤖 AI Suggestions</div>
+                <div class="test-button" id="test-save-template-btn">💾 Save Template</div>
+                <div class="test-button" id="test-templates-btn">📋 Templates</div>
+                <div class="test-button" id="test-marketplace-btn">🛍️ Marketplace</div>
+                <div class="test-button" id="test-save-btn">💾 Save</div>
+                <div class="test-button" id="test-generate-btn">🚀 Generate</div>
+            </div>
+            <div class="test-results" id="nav-results"></div>
+        </div>
+        
+        <!-- Form Action Buttons -->
+        <div class="test-section">
+            <div class="test-header">
+                <div class="test-title">📝 Form Action Buttons</div>
+                <div class="test-status status-pending" id="form-status">Pending</div>
+            </div>
+            <div class="button-grid">
+                <div class="test-button" id="test-undo-btn">↶ Undo</div>
+                <div class="test-button" id="test-redo-btn">↷ Redo</div>
+                <div class="test-button" id="test-add-item-btn">+ Add Item</div>
+                <div class="test-button" id="test-generate-pdf-btn">📄 Generate PDF</div>
+                <div class="test-button" id="test-save-local-btn">💾 Download PDF</div>
+                <div class="test-button" id="test-detect-location-btn">📍 Auto-detect Tax</div>
+            </div>
+            <div class="test-results" id="form-results"></div>
+        </div>
+        
+        <!-- Preview Buttons -->
+        <div class="test-section">
+            <div class="test-header">
+                <div class="test-title">👁️ Preview Buttons</div>
+                <div class="test-status status-pending" id="preview-status">Pending</div>
+            </div>
+            <div class="button-grid">
+                <div class="test-button" id="test-toggle-preview-btn">🔄 Toggle Preview Edit</div>
+                <div class="test-button" id="test-apply-preview-btn">✓ Apply Preview</div>
+            </div>
+            <div class="test-results" id="preview-results"></div>
+        </div>
+        
+        <!-- Modal Buttons -->
+        <div class="test-section">
+            <div class="test-header">
+                <div class="test-title">🪟 Modal & Popup Buttons</div>
+                <div class="test-status status-pending" id="modal-status">Pending</div>
+            </div>
+            <div class="button-grid">
+                <div class="test-button" id="test-buy-gens-btn">💳 Buy Generations</div>
+                <div class="test-button" id="test-add-client-btn">+ Add Client</div>
+                <div class="test-button" id="test-close-modal-btn">✕ Close Modal</div>
+                <div class="test-button" id="test-confirm-cancel-btn">Cancel</div>
+                <div class="test-button" id="test-confirm-ok-btn">OK</div>
+            </div>
+            <div class="test-results" id="modal-results"></div>
+        </div>
+        
+        <!-- Interactive Elements -->
+        <div class="test-section">
+            <div class="test-header">
+                <div class="test-title">🎛️ Interactive Elements</div>
+                <div class="test-status status-pending" id="interactive-status">Pending</div>
+            </div>
+            <div class="button-grid">
+                <div class="test-button" id="test-use-ai-toggle">🤖 AI Toggle</div>
+                <div class="test-button" id="test-currency-select">💱 Currency Select</div>
+                <div class="test-button" id="test-payment-terms">📅 Payment Terms</div>
+                <div class="test-button" id="test-template-selector">🎨 Template Selector</div>
+            </div>
+            <div class="test-results" id="interactive-results"></div>
+        </div>
+    </div>
+
+    <script>
+        let testResults = {
+            nav: { working: 0, broken: 0, total: 8 },
+            form: { working: 0, broken: 0, total: 6 },
+            preview: { working: 0, broken: 0, total: 2 },
+            modal: { working: 0, broken: 0, total: 5 },
+            interactive: { working: 0, broken: 0, total: 4 }
+        };
+
+        async function runAllTests() {
+            const btn = document.getElementById('run-tests-btn');
+            btn.disabled = true;
+            btn.textContent = '🔄 Testing Buttons...';
+            
+            updateProgress(0);
+            
+            // Open main application in new window for testing
+            const testWindow = window.open('index.html', 'testWindow', 'width=1200,height=800');
+            
+            if (!testWindow) {
+                alert('Please allow popups for this test to work properly');
+                btn.disabled = false;
+                btn.textContent = '🧪 Test All Buttons';
+                return;
+            }
+            
+            // Wait for page to load
+            await waitForPageLoad(testWindow);
+            
+            // Test each category
+            await testNavigationButtons(testWindow);
+            updateProgress(20);
+            
+            await testFormButtons(testWindow);
+            updateProgress(40);
+            
+            await testPreviewButtons(testWindow);
+            updateProgress(60);
+            
+            await testModalButtons(testWindow);
+            updateProgress(80);
+            
+            await testInteractiveElements(testWindow);
+            updateProgress(100);
+            
+            updateSummary();
+            btn.disabled = false;
+            btn.textContent = '🧪 Test All Buttons';
+            
+            // Close test window after delay
+            setTimeout(() => {
+                testWindow.close();
+            }, 3000);
+        }
+
+        function waitForPageLoad(win) {
+            return new Promise((resolve) => {
+                const check = () => {
+                    if (win.document && win.document.readyState === 'complete') {
+                        setTimeout(resolve, 1000); // Extra time for scripts to load
+                    } else {
+                        setTimeout(check, 100);
+                    }
+                };
+                check();
+            });
+        }
+
+        async function testNavigationButtons(win) {
+            const status = document.getElementById('nav-status');
+            const results = document.getElementById('nav-results');
+            
+            status.className = 'test-status status-running';
+            status.textContent = 'Testing...';
+            
+            const tests = [
+                { id: 'history-btn', name: 'History Button' },
+                { id: 'client-db-btn', name: 'Client Database Button' },
+                { id: 'ai-suggest-btn', name: 'AI Suggestions Button' },
+                { id: 'save-template-btn', name: 'Save Template Button' },
+                { id: 'templates-btn', name: 'Templates Button' },
+                { id: 'marketplace-btn', name: 'Marketplace Button' },
+                { id: 'save-btn', name: 'Save Button' },
+                { id: 'generate-btn', name: 'Generate Button' }
+            ];
+            
+            results.innerHTML = '';
+            for (const test of tests) {
+                const result = await testButton(win, test.id, test.name);
+                const item = createTestItem(test.name, result);
+                results.appendChild(item);
+                updateTestCounts('nav', result);
+                updateButtonStatus(test.id, result);
+            }
+            
+            status.className = `test-status status-${testResults.nav.broken > 0 ? 'failed' : 'passed'}`;
+            status.textContent = testResults.nav.broken > 0 ? 'Failed' : 'Passed';
+        }
+
+        async function testFormButtons(win) {
+            const status = document.getElementById('form-status');
+            const results = document.getElementById('form-results');
+            
+            status.className = 'test-status status-running';
+            status.textContent = 'Testing...';
+            
+            const tests = [
+                { id: 'undo-btn', name: 'Undo Button' },
+                { id: 'redo-btn', name: 'Redo Button' },
+                { id: 'add-item-btn', name: 'Add Item Button' },
+                { id: 'generate-pdf-btn', name: 'Generate PDF Button' },
+                { id: 'save-local-btn', name: 'Download PDF Button' },
+                { id: 'detect-location-btn', name: 'Auto-detect Tax Button' }
+            ];
+            
+            results.innerHTML = '';
+            for (const test of tests) {
+                const result = await testButton(win, test.id, test.name);
+                const item = createTestItem(test.name, result);
+                results.appendChild(item);
+                updateTestCounts('form', result);
+                updateButtonStatus(test.id, result);
+            }
+            
+            status.className = `test-status status-${testResults.form.broken > 0 ? 'failed' : 'passed'}`;
+            status.textContent = testResults.form.broken > 0 ? 'Failed' : 'Passed';
+        }
+
+        async function testPreviewButtons(win) {
+            const status = document.getElementById('preview-status');
+            const results = document.getElementById('preview-results');
+            
+            status.className = 'test-status status-running';
+            status.textContent = 'Testing...';
+            
+            const tests = [
+                { id: 'toggle-preview-btn', name: 'Toggle Preview Button' },
+                { id: 'apply-preview-btn', name: 'Apply Preview Button' }
+            ];
+            
+            results.innerHTML = '';
+            for (const test of tests) {
+                const result = await testButton(win, test.id, test.name);
+                const item = createTestItem(test.name, result);
+                results.appendChild(item);
+                updateTestCounts('preview', result);
+                updateButtonStatus(test.id, result);
+            }
+            
+            status.className = `test-status status-${testResults.preview.broken > 0 ? 'failed' : 'passed'}`;
+            status.textContent = testResults.preview.broken > 0 ? 'Failed' : 'Passed';
+        }
+
+        async function testModalButtons(win) {
+            const status = document.getElementById('modal-status');
+            const results = document.getElementById('modal-results');
+            
+            status.className = 'test-status status-running';
+            status.textContent = 'Testing...';
+            
+            const tests = [
+                { id: 'buy-gens-btn', name: 'Buy Generations Button' },
+                { id: 'add-client-btn', name: 'Add Client Button' },
+                { id: 'close-modal-btn', name: 'Close Modal Button' },
+                { id: 'confirm-cancel-btn', name: 'Confirm Cancel Button' },
+                { id: 'confirm-ok-btn', name: 'Confirm OK Button' }
+            ];
+            
+            results.innerHTML = '';
+            for (const test of tests) {
+                const result = await testButton(win, test.id, test.name);
+                const item = createTestItem(test.name, result);
+                results.appendChild(item);
+                updateTestCounts('modal', result);
+                updateButtonStatus(test.id, result);
+            }
+            
+            status.className = `test-status status-${testResults.modal.broken > 0 ? 'failed' : 'passed'}`;
+            status.textContent = testResults.modal.broken > 0 ? 'Failed' : 'Passed';
+        }
+
+        async function testInteractiveElements(win) {
+            const status = document.getElementById('interactive-status');
+            const results = document.getElementById('interactive-results');
+            
+            status.className = 'test-status status-running';
+            status.textContent = 'Testing...';
+            
+            const tests = [
+                { id: 'use-ai-toggle', name: 'AI Toggle' },
+                { id: 'currency-select', name: 'Currency Select' },
+                { id: 'payment-terms', name: 'Payment Terms' },
+                { id: 'template-selector', name: 'Template Selector' }
+            ];
+            
+            results.innerHTML = '';
+            for (const test of tests) {
+                const result = await testInteractiveElement(win, test.id, test.name);
+                const item = createTestItem(test.name, result);
+                results.appendChild(item);
+                updateTestCounts('interactive', result);
+                updateButtonStatus(test.id, result);
+            }
+            
+            status.className = `test-status status-${testResults.interactive.broken > 0 ? 'failed' : 'passed'}`;
+            status.textContent = testResults.interactive.broken > 0 ? 'Failed' : 'Passed';
+        }
+
+        async function testButton(win, buttonId, buttonName) {
+            try {
+                const button = win.document.getElementById(buttonId);
+                if (!button) {
+                    return { working: false, reason: 'Button not found' };
+                }
+                
+                // Check if button has event listener
+                const hasClickListener = button.onclick || win.getEventListeners?.(button)?.click?.length > 0;
+                
+                // Simulate click
+                button.click();
+                
+                // Check for visual feedback
+                const computedStyle = win.getComputedStyle(button);
+                const isVisible = computedStyle.display !== 'none' && computedStyle.visibility !== 'hidden';
+                const isEnabled = !button.disabled;
+                
+                return { 
+                    working: hasClickListener && isVisible && isEnabled,
+                    reason: !hasClickListener ? 'No event listener' : 
+                            !isVisible ? 'Button not visible' :
+                            !isEnabled ? 'Button disabled' : 'Working'
+                };
+            } catch (error) {
+                return { working: false, reason: error.message };
+            }
+        }
+
+        async function testInteractiveElement(win, elementId, elementName) {
+            try {
+                const element = win.document.getElementById(elementId);
+                if (!element) {
+                    return { working: false, reason: 'Element not found' };
+                }
+                
+                const computedStyle = win.getComputedStyle(element);
+                const isVisible = computedStyle.display !== 'none' && computedStyle.visibility !== 'hidden';
+                const isEnabled = !element.disabled;
+                
+                // Test interaction
+                if (element.tagName === 'INPUT' && element.type === 'checkbox') {
+                    element.checked = !element.checked;
+                    element.dispatchEvent(new Event('change', { bubbles: true }));
+                } else if (element.tagName === 'SELECT') {
+                    element.selectedIndex = (element.selectedIndex + 1) % element.options.length;
+                    element.dispatchEvent(new Event('change', { bubbles: true }));
+                } else {
+                    element.click();
+                }
+                
+                return { 
+                    working: isVisible && isEnabled,
+                    reason: !isVisible ? 'Element not visible' :
+                            !isEnabled ? 'Element disabled' : 'Working'
+                };
+            } catch (error) {
+                return { working: false, reason: error.message };
+            }
+        }
+
+        function createTestItem(name, result) {
+            const item = document.createElement('div');
+            item.className = `test-item ${result.working ? 'pass' : 'fail'}`;
+            const status = result.working ? '✅' : '❌';
+            const reason = result.reason ? ` (${result.reason})` : '';
+            item.innerHTML = `<strong>${status}</strong> ${name}${reason}`;
+            return item;
+        }
+
+        function updateTestCounts(category, result) {
+            if (result.working) {
+                testResults[category].working++;
+            } else {
+                testResults[category].broken++;
+            }
+        }
+
+        function updateButtonStatus(buttonId, result) {
+            const button = document.getElementById('test-' + buttonId);
+            if (button) {
+                button.className = `test-button ${result.working ? 'working' : 'broken'}`;
+                button.title = result.reason || (result.working ? 'Working' : 'Not working');
+            }
+        }
+
+        function updateProgress(percent) {
+            document.getElementById('progress-fill').style.width = percent + '%';
+        }
+
+        function updateSummary() {
+            let totalWorking = 0;
+            let totalBroken = 0;
+            let totalTests = 0;
+
+            for (const category in testResults) {
+                totalWorking += testResults[category].working;
+                totalBroken += testResults[category].broken;
+                totalTests += testResults[category].total;
+            }
+
+            document.getElementById('total-tests').textContent = totalTests;
+            document.getElementById('working-tests').textContent = totalWorking;
+            document.getElementById('broken-tests').textContent = totalBroken;
+            
+            const successRate = totalTests > 0 ? Math.round((totalWorking / totalTests) * 100) : 0;
+            document.getElementById('success-rate').textContent = successRate + '%';
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Direct Button Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; background: #f5f5f5; }
+        .test-container { max-width: 600px; margin: 0 auto; background: white; padding: 20px; border-radius: 8px; }
+        .test-button { background: #007bff; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; margin: 5px; }
+        .test-button:hover { background: #0056b3; }
+        .result { margin: 10px 0; padding: 10px; border-radius: 4px; }
+        .result.success { background: #d4edda; color: #155724; }
+        .result.error { background: #f8d7da; color: #721c24; }
+        .back-btn { background: #6c757d; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; text-decoration: none; margin-bottom: 20px; display: inline-block; }
+        .back-btn:hover { background: #545b62; }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <a href="index.html" class="back-btn">← Back to Invoice Generator</a>
+        <h1>🔧 Direct Button Test</h1>
+        <p>This will directly test if the buttons work.</p>
+        
+        <div class="test-section">
+            <h3>📍 Auto-Detect Tax</h3>
+            <button id="detect-location" class="test-button">📍 Auto-detect Tax</button>
+            <div id="tax-result"></div>
+        </div>
+        
+        <div class="test-section">
+            <h3>📄 Generate PDF</h3>
+            <button id="generate-pdf" class="test-button">📄 Generate Invoice</button>
+            <div id="generate-result"></div>
+        </div>
+        
+        <div class="test-section">
+            <h3>💾 Download PDF</h3>
+            <button id="save-local" class="test-button">💾 Download PDF</button>
+            <div id="download-result"></div>
+        </div>
+        
+        <div class="test-section">
+            <h3>📋 Console Output</h3>
+            <div id="console-output"></div>
+        </div>
+    </div>
+
+    <script>
+        // Override console.log to show output
+        const originalLog = console.log;
+        const consoleOutput = document.getElementById('console-output');
+        
+        console.log = function(...args) {
+            originalLog.apply(console, args);
+            if (consoleOutput) {
+                consoleOutput.innerHTML += args.join(' ') + '<br>';
+            }
+        };
+
+        function showResult(elementId, message, isSuccess = true) {
+            const element = document.getElementById(elementId);
+            if (element) {
+                element.innerHTML = `<div class="result ${isSuccess ? 'success' : 'error'}">${message}</div>`;
+            }
+        }
+
+        // Simple auto-detect tax function
+        function detectLocationAndSetTax() {
+            console.log('Auto-detect tax function called!');
+            showResult('tax-result', '✅ Function called! Checking location...', true);
+            
+            if (!navigator.geolocation) {
+                console.log('Geolocation not supported');
+                showResult('tax-result', '❌ Geolocation not supported by your browser', false);
+                return;
+            }
+            
+            console.log('Requesting location...');
+            showResult('tax-result', '📍 Requesting location permission...', true);
+            
+            navigator.geolocation.getCurrentPosition(
+                (position) => {
+                    console.log('Location obtained:', position.coords.latitude, position.coords.longitude);
+                    showResult('tax-result', '✅ Location obtained! Setting tax to 8.25% (example)', true);
+                    
+                    // Set tax to example value
+                    const taxInput = window.parent?.document?.getElementById('tax');
+                    if (taxInput) {
+                        taxInput.value = '8.25';
+                        console.log('Tax set to 8.25%');
+                    }
+                },
+                (error) => {
+                    console.log('Location error:', error.message);
+                    let errorMessage = '❌ Location error: ';
+                    switch(error.code) {
+                        case error.PERMISSION_DENIED:
+                            errorMessage += 'Location access denied. Please enable location services.';
+                            break;
+                        case error.POSITION_UNAVAILABLE:
+                            errorMessage += 'Location information unavailable.';
+                            break;
+                        case error.TIMEOUT:
+                            errorMessage += 'Location request timed out.';
+                            break;
+                        default:
+                            errorMessage += error.message;
+                    }
+                    showResult('tax-result', errorMessage, false);
+                }
+            );
+        }
+
+        // Simple generate PDF function
+        function generatePDF() {
+            console.log('Generate PDF function called!');
+            showResult('generate-result', '✅ Function called! Validating...', true);
+            
+            // Get form data from parent window
+            const businessName = window.parent?.document?.getElementById('business-name')?.innerText?.trim();
+            const clientName = window.parent?.document?.getElementById('client-name')?.innerText?.trim();
+            const clientEmail = window.parent?.document?.getElementById('client-email')?.value?.trim();
+            
+            console.log('Form data:', { businessName, clientName, clientEmail });
+            
+            if (!businessName) {
+                showResult('generate-result', '❌ Please enter a business name', false);
+                return;
+            }
+            if (!clientName) {
+                showResult('generate-result', '❌ Please enter a client name', false);
+                return;
+            }
+            if (!clientEmail) {
+                showResult('generate-result', '❌ Please enter a client email', false);
+                return;
+            }
+            
+            showResult('generate-result', '✅ Validation passed! Would generate PDF here...', true);
+            console.log('Would generate PDF for:', { businessName, clientName, clientEmail });
+        }
+
+        // Simple download PDF function
+        function downloadPdf() {
+            console.log('Download PDF function called!');
+            showResult('download-result', '✅ Function called! Validating...', true);
+            
+            // Same validation as generate PDF
+            const businessName = window.parent?.document?.getElementById('business-name')?.innerText?.trim();
+            const clientName = window.parent?.document?.getElementById('client-name')?.innerText?.trim();
+            const clientEmail = window.parent?.document?.getElementById('client-email')?.value?.trim();
+            
+            console.log('Form data:', { businessName, clientName, clientEmail });
+            
+            if (!businessName) {
+                showResult('download-result', '❌ Please enter a business name', false);
+                return;
+            }
+            if (!clientName) {
+                showResult('download-result', '❌ Please enter a client name', false);
+                return;
+            }
+            if (!clientEmail) {
+                showResult('download-result', '❌ Please enter a client email', false);
+                return;
+            }
+            
+            showResult('download-result', '✅ Validation passed! Would download PDF here...', true);
+            console.log('Would download PDF for:', { businessName, clientName, clientEmail });
+        }
+
+        // Attach event listeners when page loads
+        window.addEventListener('load', () => {
+            console.log('Direct test page loaded!');
+            
+            // Auto-detect tax button
+            const detectBtn = document.getElementById('detect-location');
+            if (detectBtn) {
+                console.log('Auto-detect tax button found, attaching listener...');
+                detectBtn.addEventListener('click', detectLocationAndSetTax);
+                console.log('Auto-detect tax listener attached!');
+            } else {
+                console.log('Auto-detect tax button NOT found!');
+            }
+            
+            // Generate PDF button
+            const generateBtn = document.getElementById('generate-pdf');
+            if (generateBtn) {
+                console.log('Generate PDF button found, attaching listener...');
+                generateBtn.addEventListener('click', generatePDF);
+                console.log('Generate PDF listener attached!');
+            } else {
+                console.log('Generate PDF button NOT found!');
+            }
+            
+            // Download PDF button
+            const downloadBtn = document.getElementById('save-local');
+            if (downloadBtn) {
+                console.log('Download PDF button found, attaching listener...');
+                downloadBtn.addEventListener('click', downloadPdf);
+                console.log('Download PDF listener attached!');
+            } else {
+                console.log('Download PDF button NOT found!');
+            }
+            
+            console.log('All button listeners attached!');
+        });
+    </script>
+</body>
+</html>

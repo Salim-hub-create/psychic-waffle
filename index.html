@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<!-- Serve v2 modular UI as root index.html -->
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Invoice Generator - MODULAR VERSION v2.0</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+    <link rel="stylesheet" href="invoice-styles.css">
+</head>
+<body>
+    <!-- v2 content (from invoice.html) -->
+    <header class="header">
+        <div class="header-left">
+            <h1>Invoice Generator</h1>
+            <div class="generations-display">
+                <span class="generation-count">
+                    <span id="normal-count">0</span> Generations
+                </span>
+                <span class="generation-count" id="watermark-free-display" style="display: none;">
+                    | <span id="watermark-count">0</span> Clean Invoices
+                </span>
+                <span class="subscription-status" id="subscription-status" style="display: none;">
+                    <span id="subscription-plan"></span> Active
+                </span>
+            </div>
+        </div>
+        <div class="header-right">
+            <button class="btn btn-secondary" onclick="showMarketplace()">
+                Marketplace
+            </button>
+            <button class="btn btn-danger" id="cancel-subscription-btn" onclick="cancelSubscription()" style="display: none;">
+                Cancel Subscription
+            </button>
+            <button class="btn btn-secondary" onclick="showCreditsModal()">
+                Buy Credits
+            </button>
+            <button class="btn btn-secondary" id="manage-subscription-btn" onclick="showSubscriptionManagement()" style="display: none;">
+                Manage Subscription
+            </button>
+            <button class="btn btn-primary" id="subscribe-btn" onclick="showPricing()">
+                Subscribe
+            </button>
+        </div>
+    </header>
+
+    <div class="container">
+        <form id="invoice-form">
+            <!-- Business Information -->
+            <section class="form-section">
+                <h2>Business Information</h2>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="business-name">Business Name <span class="required">*</span></label>
+                        <input type="text" id="business-name" required>
+                        <div class="error-message" id="business-name-error"></div>
+                    </div>
+                    <div class="form-group">
+                        <label for="business-email">Business Email <span class="required">*</span></label>
+                        <input type="email" id="business-email" required>
+                        <div class="error-message" id="business-email-error"></div>
+                    </div>
+                    <div class="form-group">
+                        <label for="business-phone">Phone</label>
+                        <input type="tel" id="business-phone">
+                    </div>
+                    <div class="form-group">
+                        <label for="business-address">Address</label>
+                        <textarea id="business-address" rows="3"></textarea>
+                    </div>
+                    <div class="form-group" id="logo-upload-group" style="display: none;">
+                        <label for="logo-upload">Company Logo (Subscription Feature)</label>
+                        <input type="file" id="logo-upload" accept="image/*" onchange="handleLogoUpload(event)">
+                        <div id="logo-preview" style="margin-top: 10px;"></div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Client Information -->
+            <section class="form-section">
+                <h2>Client Information</h2>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="client-name">Client Name <span class="required">*</span></label>
+                        <input type="text" id="client-name" required>
+                        <div class="error-message" id="client-name-error"></div>
+                    </div>
+                    <div class="form-group">
+                        <label for="client-email">Client Email <span class="required">*</span></label>
+                        <input type="email" id="client-email" required>
+                        <div class="error-message" id="client-email-error"></div>
+                    </div>
+                    <div class="form-group">
+                        <label for="client-address">Client Address</label>
+                        <textarea id="client-address" rows="3"></textarea>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Invoice Details -->
+            <section class="form-section">
+                <h2>Invoice Details</h2>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="invoice-number">Invoice Number <span class="required">*</span></label>
+                        <input type="text" id="invoice-number" value="INV-001" required>
+                        <div class="error-message" id="invoice-number-error"></div>
+                    </div>
+                    <div class="form-group">
+                        <label for="invoice-date">Invoice Date <span class="required">*</span></label>
+                        <input type="date" id="invoice-date" required>
+                        <div class="error-message" id="invoice-date-error"></div>
+                    </div>
+                    <div class="form-group">
+                        <label for="due-date">Due Date <span class="required">*</span></label>
+                        <input type="date" id="due-date" required>
+                        <div class="error-message" id="due-date-error"></div>
+                    </div>
+                    <div class="form-group">
+                        <label for="currency">Currency</label>
+                        <select id="currency">
+                            <option value="USD">USD - US Dollar</option>
+                            <option value="EUR">EUR - Euro</option>
+                            <option value="GBP">GBP - British Pound</option>
+                            <option value="CAD">CAD - Canadian Dollar</option>
+                            <option value="AUD">AUD - Australian Dollar</option>
+                            <option value="JPY">JPY - Japanese Yen</option>
+                            <option value="CNY">CNY - Chinese Yuan</option>
+                            <option value="INR">INR - Indian Rupee</option>
+                            <option value="KRW">KRW - South Korean Won</option>
+                            <option value="THB">THB - Thai Baht</option>
+                            <option value="SGD">SGD - Singapore Dollar</option>
+                            <option value="MYR">MYR - Malaysian Ringgit</option>
+                            <option value="IDR">IDR - Indonesian Rupiah</option>
+                            <option value="VND">VND - Vietnamese Dong</option>
+                            <option value="PHP">PHP - Philippine Peso</option>
+                            <option value="BRL">BRL - Brazilian Real</option>
+                            <option value="MXN">MXN - Mexican Peso</option>
+                            <option value="ZAR">ZAR - South African Rand</option>
+                            <option value="EGP">EGP - Egyptian Pound</option>
+                            <option value="AED">AED - UAE Dirham</option>
+                            <option value="SAR">SAR - Saudi Riyal</option>
+                            <option value="ILS">ILS - Israeli Shekel</option>
+                            <option value="TRY">TRY - Turkish Lira</option>
+                            <option value="RUB">RUB - Russian Ruble</option>
+                        </select>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Items -->
+            <section class="form-section">
+                <h2>Invoice Items</h2>
+                <table class="items-table">
+                    <thead>
+                        <tr>
+                            <th>Description</th>
+                            <th>Quantity</th>
+                            <th>Unit Price</th>
+                            <th>Amount</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="items-tbody">
+                        <!-- Items will be added here -->
+                    </tbody>
+                </table>
+                <button type="button" class="btn btn-secondary" onclick="addItem()">+ Add Item</button>
+            </section>
+
+            <!-- Totals -->
+            <section class="form-section">
+                <h2>Totals</h2>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="tax-rate">Tax Rate (%)</label>
+                        <div style="display: flex; gap: 10px; align-items: center;">
+                            <input type="number" id="tax-rate" min="0" max="100" step="0.01" value="0">
+                            <button type="button" class="btn btn-secondary" id="detect-location" onclick="detectLocationAndSetTax()">📍 Auto-detect Tax</button>
+                        </div>
+                        <div id="location-tax-info" style="font-size: 12px; margin-top: 5px;"></div>
+                    </div>
+                    <div class="form-group">
+                        <label for="discount-rate">Discount Rate (%)</label>
+                        <input type="number" id="discount-rate" min="0" max="100" step="0.01" value="0">
+                    </div>
+                </div>
+                <div class="totals">
+                    <div class="total-row">
+                        <span>Subtotal:</span>
+                        <span id="subtotal">$0.00</span>
+                    </div>
+                    <div class="total-row">
+                        <span>Tax Amount:</span>
+                        <span id="tax-amount">$0.00</span>
+                    </div>
+                    <div class="total-row">
+                        <span>Discount Amount:</span>
+                        <span id="discount-amount">$0.00</span>
+                    </div>
+                    <div class="total-row final">
+                        <span>Total:</span>
+                        <span id="total">$0.00</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Bank Information -->
+            <section class="form-section">
+                <h2>Bank Information (Payment Details)</h2>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="bank-name">Bank Name</label>
+                        <input type="text" id="bank-name" placeholder="e.g., Chase Bank, Bank of America">
+                    </div>
+                    <div class="form-group">
+                        <label for="account-name">Account Name</label>
+                        <input type="text" id="account-name" placeholder="Your Business Account Name">
+                    </div>
+                    <div class="form-group">
+                        <label for="account-number">Account Number</label>
+                        <input type="text" id="account-number" placeholder="Your Account Number">
+                    </div>
+                    <div class="form-group">
+                        <label for="routing-number">Routing Number</label>
+                        <input type="text" id="routing-number" placeholder="Your Routing Number">
+                    </div>
+                    <div class="form-group">
+                        <label for="swift-code">SWIFT Code (International)</label>
+                        <input type="text" id="swift-code" placeholder="SWIFT/BIC Code">
+                    </div>
+                    <div class="form-group">
+                        <label for="payment-instructions">Payment Instructions</label>
+                        <textarea id="payment-instructions" rows="3" placeholder="e.g., Please include invoice number in payment reference"></textarea>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Actions -->
+            <section class="form-section">
+                <div class="actions">
+                    <div>
+                        <button type="button" class="btn btn-secondary" onclick="undo()">↶ Undo</button>
+                        <button type="button" class="btn btn-secondary" onclick="redo()">↷ Redo</button>
+                    </div>
+                    <div>
+                        <button type="button" class="btn btn-info" onclick="previewPDF()" id="preview-btn">👁️ Preview PDF</button>
+                        <button type="button" class="btn btn-success" onclick="downloadPDF()" id="download-btn">💾 Download PDF (1 gen)</button>
+                    </div>
+                </div>
+            </section>
+        </form>
+    </div>
+
+    <script src="invoice-script.js"></script>
+</body>
+</html>

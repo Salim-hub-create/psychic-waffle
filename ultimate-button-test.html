@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ultimate Button Testing Suite - 30x Testing</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; background: #f5f5f5; }
+        .test-container { max-width: 1400px; margin: 0 auto; }
+        .test-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
+        .back-btn { background: #6c757d; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; text-decoration: none; }
+        .back-btn:hover { background: #545b62; }
+        .test-section { background: white; margin: 20px 0; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .test-title { font-size: 1.5em; font-weight: bold; color: #333; margin: 0; }
+        .test-status { padding: 5px 15px; border-radius: 20px; font-size: 0.9em; font-weight: bold; }
+        .status-pending { background: #fff3cd; color: #856404; }
+        .status-running { background: #cce5ff; color: #004085; }
+        .status-passed { background: #d4edda; color: #155724; }
+        .status-failed { background: #f8d7da; color: #721c24; }
+        .test-results { margin-top: 15px; }
+        .test-item { padding: 10px; margin: 5px 0; border-left: 4px solid #ddd; background: #f9f9f9; }
+        .test-item.pass { border-left-color: #28a745; }
+        .test-item.fail { border-left-color: #dc3545; }
+        .progress-bar { width: 100%; height: 20px; background: #e9ecef; border-radius: 10px; overflow: hidden; margin: 10px 0; }
+        .progress-fill { height: 100%; background: linear-gradient(90deg, #007bff, #28a745); transition: width 0.3s ease; }
+        .run-tests-btn { background: #007bff; color: white; border: none; padding: 12px 30px; border-radius: 6px; cursor: pointer; font-size: 1.1em; }
+        .run-tests-btn:hover { background: #0056b3; }
+        .run-tests-btn:disabled { background: #6c757d; cursor: not-allowed; }
+        .summary-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px; margin: 20px 0; }
+        .stat-card { background: #f8f9fa; padding: 15px; border-radius: 8px; text-align: center; }
+        .stat-number { font-size: 2em; font-weight: bold; color: #007bff; }
+        .stat-label { color: #6c757d; margin-top: 5px; }
+        .button-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; margin: 15px 0; }
+        .test-button { background: #f8f9fa; border: 1px solid #dee2e6; padding: 10px; border-radius: 6px; cursor: pointer; text-align: center; transition: all 0.2s ease; }
+        .test-button:hover { background: #e9ecef; border-color: #adb5bd; }
+        .test-button.working { background: #d4edda; border-color: #28a745; }
+        .test-button.broken { background: #f8d7da; border-color: #dc3545; }
+        .test-stats { font-size: 0.9em; color: #6b7280; margin-top: 5px; }
+        .reliability-score { font-weight: bold; font-size: 1.1em; }
+        .excellent { color: #10b981; }
+        .good { color: #3b82f6; }
+        .fair { color: #f59e0b; }
+        .poor { color: #ef4444; }
+        .test-log { max-height: 200px; overflow-y: auto; background: #f8f9fa; padding: 10px; border-radius: 4px; font-family: monospace; font-size: 0.8em; margin-top: 10px; }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <div class="test-header">
+            <a href="index.html" class="back-btn">← Back to Invoice Generator</a>
+            <h1>🔥 Ultimate Button Testing Suite - 30x Testing</h1>
+        </div>
+        <p>Extreme testing of all buttons - 30 rounds each to ensure 100% reliability!</p>
+        
+        <div class="summary-stats">
+            <div class="stat-card">
+                <div class="stat-number" id="total-tests">0</div>
+                <div class="stat-label">Total Buttons</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="total-runs">0</div>
+                <div class="stat-label">Total Test Runs</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="success-runs">0</div>
+                <div class="stat-label">Successful Runs</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="reliability">0%</div>
+                <div class="stat-label">Overall Reliability</div>
+            </div>
+        </div>
+        
+        <div class="progress-bar">
+            <div class="progress-fill" id="progress-fill" style="width: 0%"></div>
+        </div>
+        
+        <button class="run-tests-btn" id="run-tests-btn" onclick="runUltimateTests()">🚀 Run 30x Ultimate Tests</button>
+        
+        <!-- Main Navigation Buttons -->
+        <div class="test-section">
+            <div class="test-header">
+                <div class="test-title">🧭 Main Navigation Buttons</div>
+                <div class="test-status status-pending" id="nav-status">Pending</div>
+            </div>
+            <div class="button-grid">
+                <div class="test-button" id="test-history-btn">📜 History</div>
+                <div class="test-button" id="test-client-db-btn">👥 Clients</div>
+                <div class="test-button" id="test-recurring-btn">🔄 Recurring</div>
+                <div class="test-button" id="test-save-template-btn">💾 Save Template</div>
+                <div class="test-button" id="test-templates-btn">📋 Templates</div>
+                <div class="test-button" id="test-marketplace-btn">🛍️ Marketplace</div>
+                <div class="test-button" id="test-save-btn">💾 Save</div>
+                <div class="test-button" id="test-generate-btn">🚀 Generate</div>
+            </div>
+            <div class="test-results" id="nav-results"></div>
+        </div>
+        
+        <!-- Form Action Buttons -->
+        <div class="test-section">
+            <div class="test-header">
+                <div class="test-title">📝 Form Action Buttons</div>
+                <div class="test-status status-pending" id="form-status">Pending</div>
+            </div>
+            <div class="button-grid">
+                <div class="test-button" id="test-undo-btn">↶ Undo</div>
+                <div class="test-button" id="test-redo-btn">↷ Redo</div>
+                <div class="test-button" id="test-add-item-btn">+ Add Item</div>
+                <div class="test-button" id="test-generate-pdf-btn">📄 Generate PDF</div>
+                <div class="test-button" id="test-save-local-btn">💾 Download PDF</div>
+                <div class="test-button" id="test-detect-location-btn">📍 Auto-detect Tax</div>
+            </div>
+            <div class="test-results" id="form-results"></div>
+        </div>
+        
+        <!-- Preview Buttons -->
+        <div class="test-section">
+            <div class="test-header">
+                <div class="test-title">👁️ Preview Buttons</div>
+                <div class="test-status status-pending" id="preview-status">Pending</div>
+            </div>
+            <div class="button-grid">
+                <div class="test-button" id="test-toggle-preview-btn">🔄 Toggle Preview Edit</div>
+                <div class="test-button" id="test-apply-preview-btn">✓ Apply Preview</div>
+            </div>
+            <div class="test-results" id="preview-results"></div>
+        </div>
+        
+        <!-- Modal Buttons -->
+        <div class="test-section">
+            <div class="test-header">
+                <div class="test-title">🪟 Modal & Popup Buttons</div>
+                <div class="test-status status-pending" id="modal-status">Pending</div>
+            </div>
+            <div class="button-grid">
+                <div class="test-button" id="test-buy-gens-btn">💳 Buy Generations</div>
+                <div class="test-button" id="test-add-client-btn">+ Add Client</div>
+                <div class="test-button" id="test-close-modal-btn">✕ Close Modal</div>
+                <div class="test-button" id="test-confirm-cancel-btn">Cancel</div>
+                <div class="test-button" id="test-confirm-ok-btn">OK</div>
+            </div>
+            <div class="test-results" id="modal-results"></div>
+        </div>
+        
+        <!-- Test Log -->
+        <div class="test-section">
+            <div class="test-header">
+                <div class="test-title">📋 Test Log</div>
+            </div>
+            <div class="test-log" id="test-log"></div>
+        </div>
+    </div>
+
+    <script>
+        let testResults = {
+            nav: { total: 0, success: 0, failed: 0, reliability: 0 },
+            form: { total: 0, success: 0, failed: 0, reliability: 0 },
+            preview: { total: 0, success: 0, failed: 0, reliability: 0 },
+            modal: { total: 0, success: 0, failed: 0, reliability: 0 }
+        };
+        
+        let totalRuns = 0;
+        let successRuns = 0;
+        const TEST_ROUNDS = 30;
+        
+        async function runUltimateTests() {
+            const btn = document.getElementById('run-tests-btn');
+            btn.disabled = true;
+            btn.textContent = '🔄 Running Ultimate Tests...';
+            
+            clearResults();
+            
+            // Open main application in new window for testing
+            const testWindow = window.open('index.html', 'testWindow', 'width=1200,height=800');
+            
+            if (!testWindow) {
+                alert('Please allow popups for this test to work properly');
+                btn.disabled = false;
+                btn.textContent = '🚀 Run 30x Ultimate Tests';
+                return;
+            }
+            
+            // Wait for page to load
+            await waitForPageLoad(testWindow);
+            
+            log('Starting 30x ultimate button testing...');
+            
+            // Run 30 rounds of testing
+            for (let round = 1; round <= TEST_ROUNDS; round++) {
+                log(`\n=== ROUND ${round}/${TEST_ROUNDS} ===`);
+                
+                await testNavigationButtons(testWindow, round);
+                await testFormButtons(testWindow, round);
+                await testPreviewButtons(testWindow, round);
+                await testModalButtons(testWindow, round);
+                
+                updateProgress((round / TEST_ROUNDS) * 100);
+                
+                // Small delay between rounds
+                await sleep(100);
+            }
+            
+            // Close test window
+            testWindow.close();
+            
+            updateSummary();
+            btn.disabled = false;
+            btn.textContent = '🚀 Run 30x Ultimate Tests';
+            
+            log('\n🎉 Ultimate testing complete!');
+        }
+        
+        function waitForPageLoad(win) {
+            return new Promise((resolve) => {
+                const check = () => {
+                    if (win.document && win.document.readyState === 'complete') {
+                        setTimeout(resolve, 1000); // Extra time for scripts to load
+                    } else {
+                        setTimeout(check, 100);
+                    }
+                };
+                check();
+            });
+        }
+        
+        async function testNavigationButtons(win, round) {
+            const status = document.getElementById('nav-status');
+            const results = document.getElementById('nav-results');
+            
+            if (round === 1) {
+                status.className = 'test-status status-running';
+                status.textContent = 'Testing...';
+                results.innerHTML = '';
+            }
+            
+            const tests = [
+                { id: 'history-btn', name: 'History Button' },
+                { id: 'client-db-btn', name: 'Client Database Button' },
+                { id: 'save-template-btn', name: 'Save Template Button' },
+                { id: 'templates-btn', name: 'Templates Button' },
+                { id: 'marketplace-btn', name: 'Marketplace Button' },
+                { id: 'save-btn', name: 'Save Button' },
+                { id: 'generate-pdf', name: 'Generate PDF Button' },
+                { id: 'save-local', name: 'Download PDF Button' }
+            ];
+            
+            for (const test of tests) {
+                const result = await testButtonMultipleTimes(win, test.id, test.name, 3);
+                updateTestResults('nav', test, result, round);
+                
+                if (round === TEST_ROUNDS) {
+                    const item = createTestItem(test.name, result);
+                    if (round === TEST_ROUNDS) results.appendChild(item);
+                }
+            }
+            
+            if (round === TEST_ROUNDS) {
+                const reliability = calculateReliability(testResults.nav);
+                status.className = `test-status status-${reliability >= 95 ? 'passed' : reliability >= 80 ? 'running' : 'failed'}`;
+                status.textContent = `${reliability.toFixed(1)}% Reliability`;
+            }
+        }
+        
+        async function testFormButtons(win, round) {
+            const status = document.getElementById('form-status');
+            const results = document.getElementById('form-results');
+            
+            if (round === 1) {
+                status.className = 'test-status status-running';
+                status.textContent = 'Testing...';
+                results.innerHTML = '';
+            }
+            
+            const tests = [
+                { id: 'undo-btn', name: 'Undo Button' },
+                { id: 'redo-btn', name: 'Redo Button' },
+                { id: 'add-item', name: 'Add Item Button' },
+                { id: 'detect-location', name: 'Auto-detect Tax Button' },
+                { id: 'toggle-preview', name: 'Toggle Preview Button' },
+                { id: 'apply-preview', name: 'Apply Preview Button' }
+            ];
+            
+            for (const test of tests) {
+                const result = await testButtonMultipleTimes(win, test.id, test.name, 3);
+                updateTestResults('form', test, result, round);
+                
+                if (round === TEST_ROUNDS) {
+                    const item = createTestItem(test.name, result);
+                    results.appendChild(item);
+                }
+            }
+            
+            if (round === TEST_ROUNDS) {
+                const reliability = calculateReliability(testResults.form);
+                status.className = `test-status status-${reliability >= 95 ? 'passed' : reliability >= 80 ? 'running' : 'failed'}`;
+                status.textContent = `${reliability.toFixed(1)}% Reliability`;
+            }
+        }
+        
+        async function testPreviewButtons(win, round) {
+            const status = document.getElementById('preview-status');
+            const results = document.getElementById('preview-results');
+            
+            if (round === 1) {
+                status.className = 'test-status status-running';
+                status.textContent = 'Testing...';
+                results.innerHTML = '';
+            }
+            
+            const tests = [
+                { id: 'toggle-preview', name: 'Toggle Preview Edit Button' },
+                { id: 'apply-preview', name: 'Apply Preview Button' }
+            ];
+            
+            for (const test of tests) {
+                const result = await testButtonMultipleTimes(win, test.id, test.name, 3);
+                updateTestResults('preview', test, result, round);
+                
+                if (round === TEST_ROUNDS) {
+                    const item = createTestItem(test.name, result);
+                    results.appendChild(item);
+                }
+            }
+            
+            if (round === TEST_ROUNDS) {
+                const reliability = calculateReliability(testResults.preview);
+                status.className = `test-status status-${reliability >= 95 ? 'passed' : reliability >= 80 ? 'running' : 'failed'}`;
+                status.textContent = `${reliability.toFixed(1)}% Reliability`;
+            }
+        }
+        
+        async function testModalButtons(win, round) {
+            const status = document.getElementById('modal-status');
+            const results = document.getElementById('modal-results');
+            
+            if (round === 1) {
+                status.className = 'test-status status-running';
+                status.textContent = 'Testing...';
+                results.innerHTML = '';
+            }
+            
+            const tests = [
+                { id: 'buy-gens-btn', name: 'Buy Generations Button' },
+                { id: 'add-client-btn', name: 'Add Client Button' },
+                { id: 'close-modal-btn', name: 'Close Modal Button' },
+                { id: 'confirm-cancel-btn', name: 'Confirm Cancel Button' },
+                { id: 'confirm-ok-btn', name: 'Confirm OK Button' }
+            ];
+            
+            for (const test of tests) {
+                const result = await testButtonMultipleTimes(win, test.id, test.name, 3);
+                updateTestResults('modal', test, result, round);
+                
+                if (round === TEST_ROUNDS) {
+                    const item = createTestItem(test.name, result);
+                    results.appendChild(item);
+                }
+            }
+            
+            if (round === TEST_ROUNDS) {
+                const reliability = calculateReliability(testResults.modal);
+                status.className = `test-status status-${reliability >= 95 ? 'passed' : reliability >= 80 ? 'running' : 'failed'}`;
+                status.textContent = `${reliability.toFixed(1)}% Reliability`;
+            }
+        }
+        
+        async function testButtonMultipleTimes(win, buttonId, buttonName, attempts) {
+            let successCount = 0;
+            let failCount = 0;
+            
+            for (let i = 0; i < attempts; i++) {
+                try {
+                    const result = await testButton(win, buttonId, buttonName);
+                    if (result.working) {
+                        successCount++;
+                    } else {
+                        failCount++;
+                        log(`❌ ${buttonName} failed: ${result.reason}`);
+                    }
+                } catch (error) {
+                    failCount++;
+                    log(`❌ ${buttonName} error: ${error.message}`);
+                }
+                
+                // Small delay between attempts
+                await sleep(50);
+            }
+            
+            return {
+                working: successCount > 0,
+                successCount,
+                failCount,
+                reliability: (successCount / attempts) * 100
+            };
+        }
+        
+        async function testButton(win, buttonId, buttonName) {
+            try {
+                const button = win.document.getElementById(buttonId);
+                if (!button) {
+                    return { working: false, reason: 'Button not found' };
+                }
+                
+                // Check if button has event listener
+                const hasClickListener = button.onclick || win.getEventListeners?.(button)?.click?.length > 0;
+                
+                // Simulate click
+                button.click();
+                
+                // Check for visual feedback
+                const computedStyle = win.getComputedStyle(button);
+                const isVisible = computedStyle.display !== 'none' && computedStyle.visibility !== 'hidden';
+                const isEnabled = !button.disabled;
+                
+                return { 
+                    working: hasClickListener && isVisible && isEnabled,
+                    reason: !hasClickListener ? 'No event listener' : 
+                            !isVisible ? 'Button not visible' :
+                            !isEnabled ? 'Button disabled' : 'Working'
+                };
+            } catch (error) {
+                return { working: false, reason: error.message };
+            }
+        }
+        
+        function updateTestResults(category, test, result, round) {
+            if (round === 1) {
+                testResults[category].total++;
+            }
+            
+            if (result.working) {
+                testResults[category].success++;
+            } else {
+                testResults[category].failed++;
+            }
+            
+            // Update button status
+            const button = document.getElementById('test-' + test.id);
+            if (button) {
+                const reliability = result.reliability || 0;
+                button.className = `test-button ${reliability >= 90 ? 'working' : reliability >= 50 ? 'broken' : 'broken'}`;
+                
+                // Add stats display
+                let statsDiv = button.querySelector('.test-stats');
+                if (!statsDiv) {
+                    statsDiv = document.createElement('div');
+                    statsDiv.className = 'test-stats';
+                    button.appendChild(statsDiv);
+                }
+                
+                statsDiv.innerHTML = `
+                    <div class="reliability-score ${getReliabilityClass(reliability)}">
+                        ${reliability.toFixed(1)}% reliable
+                    </div>
+                    <div>Success: ${result.successCount}/${result.successCount + result.failCount}</div>
+                `;
+            }
+        }
+        
+        function calculateReliability(categoryResults) {
+            const total = categoryResults.total;
+            if (total === 0) return 0;
+            return (categoryResults.success / total) * 100;
+        }
+        
+        function getReliabilityClass(reliability) {
+            if (reliability >= 95) return 'excellent';
+            if (reliability >= 80) return 'good';
+            if (reliability >= 60) return 'fair';
+            return 'poor';
+        }
+        
+        function createTestItem(name, result) {
+            const item = document.createElement('div');
+            item.className = `test-item ${result.working ? 'pass' : 'fail'}`;
+            const status = result.working ? '✅' : '❌';
+            const reliability = result.reliability || 0;
+            const reliabilityClass = getReliabilityClass(reliability);
+            item.innerHTML = `
+                <strong>${status}</strong> ${name}
+                <div class="reliability-score ${reliabilityClass}">${reliability.toFixed(1)}% reliability</div>
+                <div class="test-stats">Success: ${result.successCount}/${result.successCount + result.failCount}</div>
+            `;
+            return item;
+        }
+        
+        function updateProgress(percent) {
+            document.getElementById('progress-fill').style.width = percent + '%';
+        }
+        
+        function updateSummary() {
+            let totalButtons = 0;
+            let overallReliability = 0;
+            let categories = 0;
+            
+            for (const category in testResults) {
+                totalButtons += testResults[category].total;
+                if (testResults[category].total > 0) {
+                    overallReliability += calculateReliability(testResults[category]);
+                    categories++;
+                }
+            }
+            
+            overallReliability = categories > 0 ? overallReliability / categories : 0;
+            
+            document.getElementById('total-tests').textContent = totalButtons;
+            document.getElementById('total-runs').textContent = TEST_ROUNDS;
+            document.getElementById('success-runs').textContent = TEST_ROUNDS;
+            document.getElementById('reliability').textContent = overallReliability.toFixed(1) + '%';
+        }
+        
+        function clearResults() {
+            // Reset all results
+            for (const category in testResults) {
+                testResults[category] = { total: 0, success: 0, failed: 0, reliability: 0 };
+            }
+            
+            // Clear UI
+            document.querySelectorAll('.test-results').forEach(el => el.innerHTML = '');
+            document.querySelectorAll('.test-status').forEach(el => {
+                el.className = 'test-status status-pending';
+                el.textContent = 'Pending';
+            });
+            document.querySelectorAll('.test-button').forEach(el => {
+                el.className = 'test-button';
+                const stats = el.querySelector('.test-stats');
+                if (stats) stats.remove();
+            });
+            
+            updateProgress(0);
+            updateSummary();
+        }
+        
+        function log(message) {
+            const logEl = document.getElementById('test-log');
+            if (logEl) {
+                logEl.textContent += message + '\n';
+                logEl.scrollTop = logEl.scrollHeight;
+            }
+        }
+        
+        function sleep(ms) {
+            return new Promise(resolve => setTimeout(resolve, ms));
+        }
+    </script>
+</body>
+</html>

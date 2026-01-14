@@ -1,0 +1,16 @@
+[
+  {
+    "session_id": "cs_test_a1M9M0p6cDwVMYqnxxr6WkaZMuRZ4r2iZucCN2QpMhgSvfRbxSZrkuQinb",
+    "customer_email": "salim.joubran3@gmail.com",
+    "invoices": 1,
+    "amount_total": 150,
+    "created_at": "2026-01-10T11:46:28.687Z"
+  },
+  {
+    "session_id": "cs_test_a1qi61Ae7qwstoU3VTLT5TOBExEfdCXeS9kjh7EL1Nh7FStgqJWkg2t4US",
+    "customer_email": "salim.joubran3@gmail.com",
+    "invoices": 1,
+    "amount_total": 500,
+    "created_at": "2026-01-10T11:49:33.417Z"
+  }
+]

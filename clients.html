@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Client Database - Invoice Generator</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="enhanced-ui.css">
+    <style>
+        .clients-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .clients-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+        .clients-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        .client-card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+        .client-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.15);
+            border-color: #667eea;
+        }
+        .client-name {
+            font-size: 1.3em;
+            font-weight: bold;
+            color: #1f2937;
+            margin-bottom: 10px;
+        }
+        .client-email {
+            color: #667eea;
+            margin-bottom: 8px;
+        }
+        .client-phone {
+            color: #6b7280;
+            margin-bottom: 8px;
+        }
+        .client-address {
+            color: #6b7280;
+            font-style: italic;
+            margin-bottom: 10px;
+            line-height: 1.4;
+        }
+        .client-notes {
+            background: #f9fafb;
+            padding: 10px;
+            border-radius: 6px;
+            font-size: 0.9em;
+            color: #4b5563;
+            margin-top: 10px;
+        }
+        .client-actions {
+            display: flex;
+            gap: 8px;
+            margin-top: 15px;
+        }
+        .client-actions .btn {
+            flex: 1;
+            padding: 8px 12px;
+            font-size: 0.9em;
+        }
+        .no-clients {
+            text-align: center;
+            padding: 60px 20px;
+            color: #6b7280;
+            font-size: 1.1em;
+        }
+        .add-client-fab {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: #667eea;
+            color: white;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+            transition: all 0.3s ease;
+        }
+        .add-client-fab:hover {
+            transform: scale(1.1);
+            background: #5a67d8;
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        }
+        .search-bar {
+            width: 100%;
+            max-width: 400px;
+            padding: 12px 16px;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            font-size: 16px;
+            margin-bottom: 20px;
+        }
+        .search-bar:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        .stats-bar {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        .stat-item {
+            background: white;
+            padding: 15px 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        .stat-number {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #667eea;
+        }
+        .stat-label {
+            color: #6b7280;
+            font-size: 0.9em;
+        }
+    </style>
+</head>
+<body>
+    <div class="clients-container">
+        <div class="clients-header">
+            <div>
+                <a href="index.html" class="back-btn">← Back to Invoice Generator</a>
+                <h1>👥 Client Database</h1>
+            </div>
+            <button class="btn primary" onclick="showAddClientModal()">+ Add New Client</button>
+        </div>
+
+        <div class="stats-bar">
+            <div class="stat-item">
+                <div class="stat-number" id="total-clients">0</div>
+                <div class="stat-label">Total Clients</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number" id="recent-clients">0</div>
+                <div class="stat-label">Added This Month</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number" id="active-clients">0</div>
+                <div class="stat-label">Active Projects</div>
+            </div>
+        </div>
+
+        <input type="text" class="search-bar" id="client-search" placeholder="🔍 Search clients by name, email, or phone...">
+
+        <div class="clients-grid" id="clients-grid">
+            <!-- Client cards will be loaded here -->
+        </div>
+
+        <div class="no-clients" id="no-clients" style="display: none;">
+            <h2>No clients found</h2>
+            <p>Start by adding your first client to the database.</p>
+            <button class="btn primary" onclick="showAddClientModal()">+ Add Your First Client</button>
+        </div>
+    </div>
+
+    <!-- Add/Edit Client Modal -->
+    <div id="client-modal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modal-title">Add New Client</h2>
+                <button class="close-btn" onclick="hideClientModal()">×</button>
+            </div>
+            <div class="modal-body">
+                <form id="client-form">
+                    <input type="hidden" id="client-index">
+                    <div class="form-group">
+                        <label>Client Name *</label>
+                        <input type="text" id="client-name" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Email Address</label>
+                        <input type="email" id="client-email">
+                    </div>
+                    <div class="form-group">
+                        <label>Phone Number</label>
+                        <input type="tel" id="client-phone">
+                    </div>
+                    <div class="form-group">
+                        <label>Address</label>
+                        <textarea id="client-address" rows="3"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Notes (payment terms, preferences, etc.)</label>
+                        <textarea id="client-notes" rows="3"></textarea>
+                    </div>
+                    <div class="form-actions">
+                        <button type="button" class="btn" onclick="hideClientModal()">Cancel</button>
+                        <button type="submit" class="btn primary">Save Client</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let clients = [];
+        let filteredClients = [];
+
+        // Load clients from localStorage
+        function loadClients() {
+            try {
+                const saved = localStorage.getItem('clients');
+                if (saved) {
+                    clients = JSON.parse(saved);
+                }
+            } catch (e) {
+                console.error('Failed to load clients:', e);
+                clients = [];
+            }
+            filteredClients = [...clients];
+            renderClients();
+            updateStats();
+        }
+
+        // Save clients to localStorage
+        function saveClients() {
+            localStorage.setItem('clients', JSON.stringify(clients));
+        }
+
+        // Render clients
+        function renderClients() {
+            const grid = document.getElementById('clients-grid');
+            const noClients = document.getElementById('no-clients');
+            
+            if (filteredClients.length === 0) {
+                grid.style.display = 'none';
+                noClients.style.display = 'block';
+                return;
+            }
+            
+            grid.style.display = 'grid';
+            noClients.style.display = 'none';
+            grid.innerHTML = '';
+            
+            filteredClients.forEach((client, index) => {
+                const originalIndex = clients.indexOf(client);
+                const card = document.createElement('div');
+                card.className = 'client-card';
+                card.innerHTML = `
+                    <div class="client-name">${escapeHtml(client.name)}</div>
+                    ${client.email ? `<div class="client-email">📧 ${escapeHtml(client.email)}</div>` : ''}
+                    ${client.phone ? `<div class="client-phone">📱 ${escapeHtml(client.phone)}</div>` : ''}
+                    ${client.address ? `<div class="client-address">📍 ${escapeHtml(client.address)}</div>` : ''}
+                    ${client.notes ? `<div class="client-notes">📝 ${escapeHtml(client.notes)}</div>` : ''}
+                    <div class="client-actions">
+                        <button class="btn primary" onclick="useClient(${originalIndex})">Use in Invoice</button>
+                        <button class="btn" onclick="editClient(${originalIndex})">Edit</button>
+                        <button class="btn danger" onclick="deleteClient(${originalIndex})">Delete</button>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        // Update statistics
+        function updateStats() {
+            document.getElementById('total-clients').textContent = clients.length;
+            
+            const thisMonth = new Date().getMonth();
+            const thisYear = new Date().getFullYear();
+            const recentClients = clients.filter(client => {
+                if (!client.created_at) return false;
+                const clientDate = new Date(client.created_at);
+                return clientDate.getMonth() === thisMonth && clientDate.getFullYear() === thisYear;
+            });
+            document.getElementById('recent-clients').textContent = recentClients.length;
+            
+            // For demo, show 70% of clients as having active projects
+            document.getElementById('active-clients').textContent = Math.floor(clients.length * 0.7);
+        }
+
+        // Search clients
+        document.getElementById('client-search').addEventListener('input', (e) => {
+            const searchTerm = e.target.value.toLowerCase();
+            if (searchTerm === '') {
+                filteredClients = [...clients];
+            } else {
+                filteredClients = clients.filter(client => 
+                    client.name.toLowerCase().includes(searchTerm) ||
+                    (client.email && client.email.toLowerCase().includes(searchTerm)) ||
+                    (client.phone && client.phone.toLowerCase().includes(searchTerm))
+                );
+            }
+            renderClients();
+        });
+
+        // Show add client modal
+        function showAddClientModal() {
+            document.getElementById('modal-title').textContent = 'Add New Client';
+            document.getElementById('client-form').reset();
+            document.getElementById('client-index').value = '';
+            document.getElementById('client-modal').classList.add('show');
+        }
+
+        // Hide client modal
+        function hideClientModal() {
+            document.getElementById('client-modal').classList.remove('show');
+        }
+
+        // Edit client
+        function editClient(index) {
+            const client = clients[index];
+            document.getElementById('modal-title').textContent = 'Edit Client';
+            document.getElementById('client-index').value = index;
+            document.getElementById('client-name').value = client.name;
+            document.getElementById('client-email').value = client.email || '';
+            document.getElementById('client-phone').value = client.phone || '';
+            document.getElementById('client-address').value = client.address || '';
+            document.getElementById('client-notes').value = client.notes || '';
+            document.getElementById('client-modal').classList.add('show');
+        }
+
+        // Delete client
+        function deleteClient(index) {
+            if (confirm(`Are you sure you want to delete "${clients[index].name}"?`)) {
+                clients.splice(index, 1);
+                saveClients();
+                loadClients();
+                showToast('Client deleted successfully');
+            }
+        }
+
+        // Use client in invoice
+        function useClient(index) {
+            const client = clients[index];
+            // Store client data for the main page to use
+            localStorage.setItem('selectedClient', JSON.stringify(client));
+            // Navigate back to main page
+            window.location.href = 'index.html';
+        }
+
+        // Handle client form submission
+        document.getElementById('client-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            
+            const index = document.getElementById('client-index').value;
+            const clientData = {
+                name: document.getElementById('client-name').value,
+                email: document.getElementById('client-email').value,
+                phone: document.getElementById('client-phone').value,
+                address: document.getElementById('client-address').value,
+                notes: document.getElementById('client-notes').value,
+                created_at: index ? clients[index].created_at : new Date().toISOString()
+            };
+            
+            if (index === '') {
+                // Add new client
+                clients.push(clientData);
+                showToast('Client added successfully');
+            } else {
+                // Update existing client
+                clients[parseInt(index)] = clientData;
+                showToast('Client updated successfully');
+            }
+            
+            saveClients();
+            loadClients();
+            hideClientModal();
+        });
+
+        // Simple toast notification
+        function showToast(message, isError = false) {
+            const toast = document.createElement('div');
+            toast.style.cssText = `
+                position: fixed;
+                bottom: 20px;
+                right: 20px;
+                background: ${isError ? '#ef4444' : '#10b981'};
+                color: white;
+                padding: 12px 20px;
+                border-radius: 8px;
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+                z-index: 10000;
+                animation: slideIn 0.3s ease;
+            `;
+            toast.textContent = message;
+            document.body.appendChild(toast);
+            
+            setTimeout(() => {
+                toast.style.animation = 'slideOut 0.3s ease';
+                setTimeout(() => document.body.removeChild(toast), 300);
+            }, 3000);
+        }
+
+        // Escape HTML for security
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        // Add animations
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes slideIn {
+                from { transform: translateX(100%); opacity: 0; }
+                to { transform: translateX(0); opacity: 1; }
+            }
+            @keyframes slideOut {
+                from { transform: translateX(0); opacity: 1; }
+                to { transform: translateX(100%); opacity: 0; }
+            }
+        `;
+        document.head.appendChild(style);
+
+        // Load clients on page load
+        loadClients();
+    </script>
+</body>
+</html>

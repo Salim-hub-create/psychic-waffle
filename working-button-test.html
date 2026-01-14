@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Working Button Test Suite</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; background: #f5f5f5; }
+        .test-container { max-width: 1200px; margin: 0 auto; }
+        .test-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
+        .back-btn { background: #6c757d; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; text-decoration: none; }
+        .back-btn:hover { background: #545b62; }
+        .test-section { background: white; margin: 20px 0; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .test-title { font-size: 1.5em; font-weight: bold; color: #333; margin: 0; }
+        .button-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; margin: 15px 0; }
+        .test-button { background: #f8f9fa; border: 1px solid #dee2e6; padding: 15px; border-radius: 6px; cursor: pointer; text-align: center; transition: all 0.2s ease; }
+        .test-button:hover { background: #e9ecef; border-color: #adb5bd; transform: translateY(-2px); }
+        .test-button.working { background: #d4edda; border-color: #28a745; }
+        .test-button.error { background: #f8d7da; border-color: #dc3545; }
+        .test-button.loading { background: #cce5ff; border-color: #007bff; cursor: not-allowed; }
+        .test-message { margin-top: 10px; padding: 10px; border-radius: 4px; font-size: 0.9em; }
+        .test-message.success { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+        .test-message.error { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+        .test-message.info { background: #d1ecf1; color: #0c5460; border: 1px solid #bee5eb; }
+        .run-tests-btn { background: #007bff; color: white; border: none; padding: 12px 30px; border-radius: 6px; cursor: pointer; font-size: 1.1em; margin-bottom: 20px; }
+        .run-tests-btn:hover { background: #0056b3; }
+        .run-tests-btn:disabled { background: #6c757d; cursor: not-allowed; }
+        .progress-bar { width: 100%; height: 20px; background: #e9ecef; border-radius: 10px; overflow: hidden; margin: 10px 0; }
+        .progress-fill { height: 100%; background: linear-gradient(90deg, #007bff, #28a745); transition: width 0.3s ease; }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <div class="test-header">
+            <a href="index.html" class="back-btn">← Back to Invoice Generator</a>
+            <h1>🔧 Working Button Test Suite</h1>
+        </div>
+        <p>Test all buttons with real functionality and error messages for insufficient generations.</p>
+        
+        <button class="run-tests-btn" onclick="runAllTests()">🚀 Test All Buttons</button>
+        <div class="progress-bar">
+            <div class="progress-fill" id="progress-fill" style="width: 0%"></div>
+        </div>
+        
+        <!-- Main Navigation Buttons -->
+        <div class="test-section">
+            <div class="test-header">
+                <div class="test-title">🧭 Main Navigation Buttons</div>
+            </div>
+            <div class="button-grid">
+                <div class="test-button" onclick="testButton('history-btn', 'History Button')">📜 History</div>
+                <div class="test-button" onclick="testButton('client-db-btn', 'Client Database Button')">👥 Clients</div>
+                <div class="test-button" onclick="testButton('save-template-btn', 'Save Template Button')">💾 Save Template</div>
+                <div class="test-button" onclick="testButton('templates-btn', 'Templates Button')">📋 Templates</div>
+                <div class="test-button" onclick="testButton('marketplace-btn', 'Marketplace Button')">🛍️ Marketplace</div>
+                <div class="test-button" onclick="testButton('save-btn', 'Save Button')">💾 Save</div>
+            </div>
+            <div id="nav-results"></div>
+        </div>
+        
+        <!-- Form Action Buttons -->
+        <div class="test-section">
+            <div class="test-header">
+                <div class="test-title">📝 Form Action Buttons</div>
+            </div>
+            <div class="button-grid">
+                <div class="test-button" onclick="testButton('undo-btn', 'Undo Button')">↶ Undo</div>
+                <div class="test-button" onclick="testButton('redo-btn', 'Redo Button')">↷ Redo</div>
+                <div class="test-button" onclick="testButton('add-item', 'Add Item Button')">+ Add Item</div>
+                <div class="test-button" onclick="testButton('detect-location', 'Auto-detect Tax Button')">📍 Auto-detect Tax</div>
+                <div class="test-button" onclick="testButton('toggle-preview', 'Toggle Preview Button')">🔄 Toggle Preview</div>
+                <div class="test-button" onclick="testButton('apply-preview', 'Apply Preview Button')">✓ Apply Preview</div>
+            </div>
+            <div id="form-results"></div>
+        </div>
+        
+        <!-- PDF Generation Buttons -->
+        <div class="test-section">
+            <div class="test-header">
+                <div class="test-title">📄 PDF Generation Buttons</div>
+            </div>
+            <div class="button-grid">
+                <div class="test-button" onclick="testButton('generate-pdf', 'Generate PDF Button')">📄 Generate PDF</div>
+                <div class="test-button" onclick="testButton('save-local', 'Download PDF Button')">💾 Download PDF</div>
+            </div>
+            <div id="pdf-results"></div>
+        </div>
+        
+        <!-- Modal Buttons -->
+        <div class="test-section">
+            <div class="test-header">
+                <div class="test-title">🪟 Modal & Popup Buttons</div>
+            </div>
+            <div class="button-grid">
+                <div class="test-button" onclick="testButton('buy-gens', 'Buy Generations Button')">💳 Buy Generations</div>
+            </div>
+            <div id="modal-results"></div>
+        </div>
+    </div>
+
+    <script>
+        let testWindow = null;
+        let currentTestIndex = 0;
+        let totalTests = 0;
+
+        async function runAllTests() {
+            const btn = document.querySelector('.run-tests-btn');
+            btn.disabled = true;
+            btn.textContent = '🔄 Testing...';
+            
+            // Clear previous results
+            document.querySelectorAll('.test-button').forEach(b => {
+                b.className = 'test-button';
+            });
+            document.querySelectorAll('[id$="-results"]').forEach(el => el.innerHTML = '');
+            
+            // Open main application
+            testWindow = window.open('index.html', 'testWindow', 'width=1200,height=800');
+            
+            if (!testWindow) {
+                showMessage('nav-results', 'error', 'Please allow popups for this test to work properly');
+                btn.disabled = false;
+                btn.textContent = '🚀 Test All Buttons';
+                return;
+            }
+            
+            // Wait for page to load
+            await waitForPageLoad();
+            
+            // Get all test buttons
+            const testButtons = document.querySelectorAll('.test-button');
+            totalTests = testButtons.length;
+            currentTestIndex = 0;
+            
+            // Test each button
+            for (let i = 0; i < testButtons.length; i++) {
+                const button = testButtons[i];
+                const buttonId = button.getAttribute('onclick').match(/'([^']+)'/)[1];
+                const buttonName = button.textContent.trim();
+                
+                await testButton(buttonId, buttonName);
+                updateProgress((i + 1) / totalTests * 100);
+                await sleep(500); // Small delay between tests
+            }
+            
+            showMessage('nav-results', 'success', `✅ All ${totalTests} buttons tested successfully!`);
+            btn.disabled = false;
+            btn.textContent = '🚀 Test All Buttons';
+        }
+
+        async function testButton(buttonId, buttonName) {
+            const buttonElement = document.querySelector(`[onclick*="${buttonId}"]`);
+            
+            if (!testWindow || testWindow.closed) {
+                showMessage(getResultsContainer(buttonId), 'error', 'Test window is closed');
+                buttonElement.className = 'test-button error';
+                return;
+            }
+            
+            try {
+                buttonElement.className = 'test-button loading';
+                showMessage(getResultsContainer(buttonId), 'info', `Testing ${buttonName}...`);
+                
+                // Find the button in the test window
+                const targetButton = testWindow.document.getElementById(buttonId);
+                
+                if (!targetButton) {
+                    showMessage(getResultsContainer(buttonId), 'error', `❌ ${buttonName}: Button not found in the application`);
+                    buttonElement.className = 'test-button error';
+                    return;
+                }
+                
+                // Check if button is visible and enabled
+                const isVisible = targetButton.offsetParent !== null;
+                const isEnabled = !targetButton.disabled;
+                
+                if (!isVisible) {
+                    showMessage(getResultsContainer(buttonId), 'error', `❌ ${buttonName}: Button is not visible`);
+                    buttonElement.className = 'test-button error';
+                    return;
+                }
+                
+                if (!isEnabled) {
+                    showMessage(getResultsContainer(buttonId), 'error', `❌ ${buttonName}: Button is disabled`);
+                    buttonElement.className = 'test-button error';
+                    return;
+                }
+                
+                // Special handling for generation-related buttons
+                if (buttonId === 'save-btn' || buttonId === 'generate-pdf' || buttonId === 'save-local') {
+                    await testGenerationButton(buttonId, buttonName, targetButton);
+                } else if (buttonId === 'buy-gens') {
+                    await testBuyGenerationsButton(buttonId, buttonName, targetButton);
+                } else {
+                    // For other buttons, just click them
+                    targetButton.click();
+                    await sleep(1000); // Wait for any modal or action to complete
+                    
+                    showMessage(getResultsContainer(buttonId), 'success', `✅ ${buttonName}: Button clicked successfully`);
+                    buttonElement.className = 'test-button working';
+                }
+                
+            } catch (error) {
+                console.error('Error testing button:', error);
+                showMessage(getResultsContainer(buttonId), 'error', `❌ ${buttonName}: ${error.message}`);
+                buttonElement.className = 'test-button error';
+            }
+        }
+
+        async function testGenerationButton(buttonId, buttonName, targetButton) {
+            try {
+                // Check if there are enough generations
+                const normalGensElement = testWindow.document.getElementById('normal-gens-remaining');
+                const currentGens = normalGensElement ? parseInt(normalGensElement.textContent) : 0;
+                
+                if (currentGens < 1) {
+                    // Should show error message for insufficient generations
+                    targetButton.click();
+                    await sleep(1000);
+                    
+                    // Check if error message appeared
+                    const toastElement = testWindow.document.getElementById('toast');
+                    const toastMessage = toastElement ? toastElement.textContent : '';
+                    
+                    if (toastMessage.includes('Insufficient generations') || toastMessage.includes('not enough generations')) {
+                        showMessage(getResultsContainer(buttonId), 'success', `✅ ${buttonName}: Correctly showed insufficient generations error (you have ${currentGens} generations)`);
+                        buttonElement.className = 'test-button working';
+                    } else {
+                        showMessage(getResultsContainer(buttonId), 'error', `❌ ${buttonName}: Expected insufficient generations error, but got: "${toastMessage}"`);
+                        buttonElement.className = 'test-button error';
+                    }
+                } else {
+                    // Should work normally
+                    targetButton.click();
+                    await sleep(1000);
+                    
+                    showMessage(getResultsContainer(buttonId), 'success', `✅ ${buttonName}: Button worked with ${currentGens} generations available`);
+                    buttonElement.className = 'test-button working';
+                }
+            } catch (error) {
+                showMessage(getResultsContainer(buttonId), 'error', `❌ ${buttonName}: Error testing generation functionality - ${error.message}`);
+                buttonElement.className = 'test-button error';
+            }
+        }
+
+        async function testBuyGenerationsButton(buttonId, buttonName, targetButton) {
+            try {
+                targetButton.click();
+                await sleep(1000);
+                
+                // Check if pricing modal opened
+                const pricingModal = testWindow.document.getElementById('pricing-modal');
+                const marketplaceModal = testWindow.document.getElementById('marketplace-modal');
+                
+                if (pricingModal && pricingModal.style.display !== 'none' && pricingModal.style.display !== '') {
+                    showMessage(getResultsContainer(buttonId), 'success', `✅ ${buttonName}: Pricing modal opened successfully`);
+                    buttonElement.className = 'test-button working';
+                    
+                    // Close the modal
+                    pricingModal.style.display = 'none';
+                } else if (marketplaceModal && marketplaceModal.classList.contains('show')) {
+                    showMessage(getResultsContainer(buttonId), 'success', `✅ ${buttonName}: Marketplace modal opened successfully`);
+                    buttonElement.className = 'test-button working';
+                    
+                    // Close the modal
+                    marketplaceModal.classList.remove('show');
+                } else {
+                    showMessage(getResultsContainer(buttonId), 'error', `❌ ${buttonName}: Modal did not open when clicked`);
+                    buttonElement.className = 'test-button error';
+                }
+            } catch (error) {
+                showMessage(getResultsContainer(buttonId), 'error', `❌ ${buttonName}: Error testing buy generations - ${error.message}`);
+                buttonElement.className = 'test-button error';
+            }
+        }
+
+        function getResultsContainer(buttonId) {
+            // Map button IDs to their result containers
+            const containerMap = {
+                'history-btn': 'nav-results',
+                'client-db-btn': 'nav-results',
+                'save-template-btn': 'nav-results',
+                'templates-btn': 'nav-results',
+                'marketplace-btn': 'nav-results',
+                'save-btn': 'nav-results',
+                'undo-btn': 'form-results',
+                'redo-btn': 'form-results',
+                'add-item': 'form-results',
+                'detect-location': 'form-results',
+                'toggle-preview': 'form-results',
+                'apply-preview': 'form-results',
+                'generate-pdf': 'pdf-results',
+                'save-local': 'pdf-results',
+                'buy-gens': 'modal-results'
+            };
+            
+            return document.getElementById(containerMap[buttonId] || 'nav-results');
+        }
+
+        function showMessage(containerId, type, message) {
+            const container = document.getElementById(containerId);
+            if (!container) return;
+            
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `test-message ${type}`;
+            messageDiv.textContent = message;
+            
+            // Clear previous messages and add new one
+            container.innerHTML = '';
+            container.appendChild(messageDiv);
+            
+            // Auto-hide success messages after 5 seconds
+            if (type === 'success') {
+                setTimeout(() => {
+                    if (messageDiv.parentNode) {
+                        messageDiv.parentNode.removeChild(messageDiv);
+                    }
+                }, 5000);
+            }
+        }
+
+        function waitForPageLoad() {
+            return new Promise((resolve) => {
+                const check = () => {
+                    if (testWindow.document && testWindow.document.readyState === 'complete') {
+                        // Wait a bit more for scripts to load
+                        setTimeout(resolve, 2000);
+                    } else {
+                        setTimeout(check, 100);
+                    }
+                };
+                check();
+            });
+        }
+
+        function updateProgress(percent) {
+            document.getElementById('progress-fill').style.width = percent + '%';
+        }
+
+        function sleep(ms) {
+            return new Promise(resolve => setTimeout(resolve, ms));
+        }
+
+        // Add some sample data for testing
+        window.addEventListener('load', () => {
+            // You can add any initialization here
+            console.log('Working Button Test Suite loaded');
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,746 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Invoice Studio - Professional Invoice Generator</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header class="app-header">
+        <div class="header-content">
+            <h1 class="app-title">Invoice Studio</h1>
+            <div class="header-stats">
+                <div class="stat-item" title="Normal invoice generations available">
+                    <span class="stat-label">Normal:</span>
+                    <span class="stat-value" id="normal-generations">0</span>
+                </div>
+                <div class="stat-item" title="AI-powered generations available">
+                    <span class="stat-label">AI:</span>
+                    <span class="stat-value" id="ai-generations">0</span>
+                </div>
+            </div>
+            <nav class="header-nav">
+                <button class="nav-btn" id="history-btn" title="View invoice history" aria-label="View invoice history">
+                    📜 History
+                </button>
+                <button class="nav-btn" id="clients-btn" title="Manage clients" aria-label="Manage clients">
+                    👥 Clients
+                </button>
+                <button class="nav-btn" id="save-template-btn" title="Save current invoice as template" aria-label="Save template">
+                    💾 Save Template
+                </button>
+                <button class="nav-btn" id="templates-btn" title="Browse templates" aria-label="Browse templates">
+                    📋 Templates
+                </button>
+                <button class="nav-btn" id="marketplace-btn" title="Template marketplace" aria-label="Template marketplace">
+                    🛍️ Marketplace
+                </button>
+                <button class="nav-btn primary" id="buy-generations-btn" title="Buy more generations" aria-label="Buy generations">
+                    💳 Buy Generations
+                </button>
+            </nav>
+        </div>
+    </header>
+
+    <main class="app-main">
+        <form id="invoice-form" novalidate>
+            <!-- Business Information Section -->
+            <section class="form-section business-section">
+                <h2 class="section-title">
+                    <span class="section-icon">🏢</span>
+                    Business Information
+                    <span class="required-hint">* Required fields</span>
+                </h2>
+                
+                <div class="form-grid">
+                    <div class="form-field">
+                        <label for="business-name" class="field-label required">
+                            Business Name *
+                        </label>
+                        <input 
+                            type="text" 
+                            id="business-name" 
+                            name="business-name" 
+                            class="form-input"
+                            required
+                            aria-describedby="business-name-error"
+                            placeholder="Enter your business name"
+                        >
+                        <div class="field-error" id="business-name-error" role="alert"></div>
+                    </div>
+
+                    <div class="form-field">
+                        <label for="business-address" class="field-label">
+                            Business Address
+                        </label>
+                        <textarea 
+                            id="business-address" 
+                            name="business-address" 
+                            class="form-input"
+                            rows="3"
+                            placeholder="Enter business address"
+                        ></textarea>
+                    </div>
+
+                    <div class="form-field">
+                        <label for="business-phone" class="field-label">
+                            Phone Number
+                        </label>
+                        <input 
+                            type="tel" 
+                            id="business-phone" 
+                            name="business-phone" 
+                            class="form-input"
+                            aria-describedby="business-phone-error"
+                            placeholder="+1 (555) 123-4567"
+                        >
+                        <div class="field-error" id="business-phone-error" role="alert"></div>
+                    </div>
+
+                    <div class="form-field">
+                        <label for="business-email" class="field-label required">
+                            Business Email *
+                        </label>
+                        <input 
+                            type="email" 
+                            id="business-email" 
+                            name="business-email" 
+                            class="form-input"
+                            required
+                            aria-describedby="business-email-error"
+                            placeholder="business@example.com"
+                        >
+                        <div class="field-error" id="business-email-error" role="alert"></div>
+                    </div>
+
+                    <div class="form-field">
+                        <label for="business-website" class="field-label">
+                            Website
+                        </label>
+                        <input 
+                            type="url" 
+                            id="business-website" 
+                            name="business-website" 
+                            class="form-input"
+                            aria-describedby="business-website-error"
+                            placeholder="https://example.com"
+                        >
+                        <div class="field-error" id="business-website-error" role="alert"></div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Client Information Section -->
+            <section class="form-section client-section">
+                <h2 class="section-title">
+                    <span class="section-icon">👤</span>
+                    Client Information
+                    <span class="required-hint">* Required fields</span>
+                </h2>
+                
+                <div class="form-grid">
+                    <div class="form-field">
+                        <label for="client-name" class="field-label required">
+                            Client Name *
+                        </label>
+                        <input 
+                            type="text" 
+                            id="client-name" 
+                            name="client-name" 
+                            class="form-input"
+                            required
+                            aria-describedby="client-name-error"
+                            placeholder="Enter client name"
+                        >
+                        <div class="field-error" id="client-name-error" role="alert"></div>
+                    </div>
+
+                    <div class="form-field">
+                        <label for="client-email" class="field-label required">
+                            Client Email *
+                        </label>
+                        <input 
+                            type="email" 
+                            id="client-email" 
+                            name="client-email" 
+                            class="form-input"
+                            required
+                            aria-describedby="client-email-error"
+                            placeholder="client@example.com"
+                        >
+                        <div class="field-error" id="client-email-error" role="alert"></div>
+                    </div>
+
+                    <div class="form-field">
+                        <label for="client-address" class="field-label">
+                            Client Address
+                        </label>
+                        <textarea 
+                            id="client-address" 
+                            name="client-address" 
+                            class="form-input"
+                            rows="3"
+                            placeholder="Enter client address"
+                        ></textarea>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Invoice Template Selection -->
+            <section class="form-section template-section">
+                <h2 class="section-title">
+                    <span class="section-icon">🎨</span>
+                    Invoice Template
+                </h2>
+                
+                <div class="template-grid" role="radiogroup" aria-labelledby="template-label">
+                    <div class="template-option">
+                        <input 
+                            type="radio" 
+                            id="template-modern" 
+                            name="invoice-template" 
+                            value="modern"
+                            checked
+                        >
+                        <label for="template-modern" class="template-card">
+                            <div class="template-preview modern-preview"></div>
+                            <div class="template-info">
+                                <h3>Modern</h3>
+                                <p>Clean & Minimal</p>
+                            </div>
+                        </label>
+                    </div>
+
+                    <div class="template-option">
+                        <input 
+                            type="radio" 
+                            id="template-professional" 
+                            name="invoice-template" 
+                            value="professional"
+                        >
+                        <label for="template-professional" class="template-card">
+                            <div class="template-preview professional-preview"></div>
+                            <div class="template-info">
+                                <h3>Professional</h3>
+                                <p>Classic Layout</p>
+                            </div>
+                        </label>
+                    </div>
+
+                    <div class="template-option">
+                        <input 
+                            type="radio" 
+                            id="template-detailed" 
+                            name="invoice-template" 
+                            value="detailed"
+                        >
+                        <label for="template-detailed" class="template-card">
+                            <div class="template-preview detailed-preview"></div>
+                            <div class="template-info">
+                                <h3>Detailed</h3>
+                                <p>Full Information</p>
+                            </div>
+                        </label>
+                    </div>
+
+                    <div class="template-option">
+                        <input 
+                            type="radio" 
+                            id="template-elegant" 
+                            name="invoice-template" 
+                            value="elegant"
+                        >
+                        <label for="template-elegant" class="template-card">
+                            <div class="template-preview elegant-preview"></div>
+                            <div class="template-info">
+                                <h3>Elegant</h3>
+                                <p>Premium Design</p>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Invoice Details Section -->
+            <section class="form-section invoice-details-section">
+                <h2 class="section-title">
+                    <span class="section-icon">📄</span>
+                    Invoice Details
+                </h2>
+                
+                <div class="form-grid">
+                    <div class="form-field">
+                        <label for="invoice-number" class="field-label required">
+                            Invoice Number *
+                        </label>
+                        <input 
+                            type="text" 
+                            id="invoice-number" 
+                            name="invoice-number" 
+                            class="form-input"
+                            required
+                            pattern="INV-[0-9]{3,}"
+                            aria-describedby="invoice-number-error invoice-number-hint"
+                            placeholder="INV-001, INV-002, etc."
+                            value="INV-013"
+                        >
+                        <div class="field-hint" id="invoice-number-hint">
+                            Format: INV-001, INV-002, etc.
+                        </div>
+                        <div class="field-error" id="invoice-number-error" role="alert"></div>
+                    </div>
+
+                    <div class="form-field">
+                        <label for="invoice-date" class="field-label required">
+                            Invoice Date *
+                        </label>
+                        <div class="date-input-group">
+                            <input 
+                                type="date" 
+                                id="invoice-date" 
+                                name="invoice-date" 
+                                class="form-input"
+                                required
+                                aria-describedby="invoice-date-error"
+                            >
+                            <button 
+                                type="button" 
+                                class="date-picker-btn"
+                                aria-label="Show date picker for invoice date"
+                            >
+                                📅
+                            </button>
+                        </div>
+                        <div class="field-error" id="invoice-date-error" role="alert"></div>
+                    </div>
+
+                    <div class="form-field">
+                        <label for="due-date" class="field-label required">
+                            Due Date *
+                        </label>
+                        <div class="date-input-group">
+                            <input 
+                                type="date" 
+                                id="due-date" 
+                                name="due-date" 
+                                class="form-input"
+                                required
+                                aria-describedby="due-date-error"
+                            >
+                            <button 
+                                type="button" 
+                                class="date-picker-btn"
+                                aria-label="Show date picker for due date"
+                            >
+                                📅
+                            </button>
+                        </div>
+                        <div class="field-error" id="due-date-error" role="alert"></div>
+                    </div>
+
+                    <div class="form-field">
+                        <label for="payment-terms" class="field-label">
+                            Payment Terms
+                        </label>
+                        <select 
+                            id="payment-terms" 
+                            name="payment-terms" 
+                            class="form-select"
+                            aria-describedby="payment-terms-hint"
+                        >
+                            <option value="receipt">Due on Receipt</option>
+                            <option value="net7">Net 7</option>
+                            <option value="net30" selected>Net 30</option>
+                            <option value="net60">Net 60</option>
+                            <option value="net90">Net 90</option>
+                            <option value="custom">Custom</option>
+                        </select>
+                        <div class="field-hint" id="payment-terms-hint">
+                            Sets the due date automatically when changed
+                        </div>
+                    </div>
+
+                    <div class="form-field">
+                        <label for="currency" class="field-label">
+                            Currency
+                        </label>
+                        <select 
+                            id="currency" 
+                            name="currency" 
+                            class="form-select"
+                            aria-describedby="currency-hint"
+                        >
+                            <option value="USD" selected>USD — US Dollar (840)</option>
+                            <option value="EUR">EUR — Euro (978)</option>
+                            <option value="GBP">GBP — British Pound (826)</option>
+                            <option value="JPY">JPY — Japanese Yen (392)</option>
+                            <option value="CAD">CAD — Canadian Dollar (124)</option>
+                            <option value="AUD">AUD — Australian Dollar (036)</option>
+                            <option value="CHF">CHF — Swiss Franc (756)</option>
+                            <option value="CNY">CNY — Chinese Yuan (156)</option>
+                            <option value="INR">INR — Indian Rupee (356)</option>
+                            <option value="ILS">ILS — Israeli New Shekel (376)</option>
+                        </select>
+                        <div class="field-hint" id="currency-hint">
+                            Select your preferred currency
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Bank Details Section -->
+            <section class="form-section bank-details-section">
+                <h2 class="section-title">
+                    <span class="section-icon">🏦</span>
+                    Bank Details
+                    <span class="optional-hint">Optional</span>
+                </h2>
+                
+                <div class="form-grid">
+                    <div class="form-field">
+                        <label for="beneficiary-name" class="field-label">
+                            Beneficiary Name
+                        </label>
+                        <input 
+                            type="text" 
+                            id="beneficiary-name" 
+                            name="beneficiary-name" 
+                            class="form-input"
+                            aria-describedby="beneficiary-name-hint"
+                            placeholder="Account holder name"
+                        >
+                        <div class="field-hint" id="beneficiary-name-hint">
+                            Name on the bank account
+                        </div>
+                    </div>
+
+                    <div class="form-field">
+                        <label for="iban-account" class="field-label">
+                            IBAN / Account Number
+                        </label>
+                        <input 
+                            type="text" 
+                            id="iban-account" 
+                            name="iban-account" 
+                            class="form-input"
+                            aria-describedby="iban-account-hint iban-account-error"
+                            placeholder="US12 3456 7890 1234 5678"
+                        >
+                        <div class="field-hint" id="iban-account-hint">
+                            Enter IBAN for international transfers or account number for domestic
+                        </div>
+                        <div class="field-error" id="iban-account-error" role="alert"></div>
+                    </div>
+
+                    <div class="form-field">
+                        <label for="bic-swift" class="field-label">
+                            BIC / SWIFT
+                        </label>
+                        <input 
+                            type="text" 
+                            id="bic-swift" 
+                            name="bic-swift" 
+                            class="form-input"
+                            aria-describedby="bic-swift-hint"
+                            placeholder="CHASUS33"
+                        >
+                        <div class="field-hint" id="bic-swift-hint">
+                            Bank identifier code for international transfers
+                        </div>
+                    </div>
+
+                    <div class="form-field">
+                        <label for="bank-name" class="field-label">
+                            Bank Name
+                        </label>
+                        <input 
+                            type="text" 
+                            id="bank-name" 
+                            name="bank-name" 
+                            class="form-input"
+                            placeholder="Bank name"
+                        >
+                    </div>
+                </div>
+            </section>
+
+            <!-- Items Section -->
+            <section class="form-section items-section">
+                <h2 class="section-title">
+                    <span class="section-icon">📦</span>
+                    Invoice Items
+                    <span class="required-hint">* At least one item required</span>
+                </h2>
+                
+                <div class="items-container">
+                    <div class="items-header">
+                        <div class="items-table-wrapper">
+                            <table class="items-table" id="items-table">
+                                <thead>
+                                    <tr>
+                                        <th scope="col">Description</th>
+                                        <th scope="col" class="qty-column">Quantity</th>
+                                        <th scope="col" class="unit-column">Unit Price</th>
+                                        <th scope="col" class="amount-column">Amount</th>
+                                        <th scope="col" class="actions-column">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="items-tbody">
+                                    <!-- Items will be added here dynamically -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    
+                    <div class="items-controls">
+                        <button 
+                            type="button" 
+                            id="add-item-btn" 
+                            class="btn btn-secondary"
+                            aria-label="Add new invoice item"
+                        >
+                            ➕ Add Item
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Totals Section -->
+            <section class="form-section totals-section">
+                <h2 class="section-title">
+                    <span class="section-icon">💰</span>
+                    Totals
+                </h2>
+                
+                <div class="totals-grid">
+                    <div class="form-field">
+                        <label for="tax-rate" class="field-label">
+                            Tax Rate (%)
+                        </label>
+                        <div class="tax-input-group">
+                            <input 
+                                type="number" 
+                                id="tax-rate" 
+                                name="tax-rate" 
+                                class="form-input"
+                                min="0" 
+                                max="100" 
+                                step="0.01"
+                                value="0"
+                                aria-describedby="tax-rate-hint tax-rate-error"
+                            >
+                            <button 
+                                type="button" 
+                                id="auto-detect-tax-btn" 
+                                class="btn btn-small"
+                                aria-label="Auto-detect tax based on location"
+                            >
+                                📍 Auto-detect Tax
+                            </button>
+                        </div>
+                        <div class="field-hint" id="tax-rate-hint">
+                            Enter tax percentage or use auto-detect
+                        </div>
+                        <div class="field-error" id="tax-rate-error" role="alert"></div>
+                        <div class="tax-info" id="tax-info" aria-live="polite"></div>
+                    </div>
+
+                    <div class="form-field">
+                        <label for="discount-rate" class="field-label">
+                            Discount Rate (%)
+                        </label>
+                        <input 
+                            type="number" 
+                            id="discount-rate" 
+                            name="discount-rate" 
+                            class="form-input"
+                            min="0" 
+                            max="100" 
+                            step="0.01"
+                            value="0"
+                            aria-describedby="discount-rate-hint discount-rate-error"
+                        >
+                        <div class="field-hint" id="discount-rate-hint">
+                            Enter discount percentage (0-100)
+                        </div>
+                        <div class="field-error" id="discount-rate-error" role="alert"></div>
+                    </div>
+                </div>
+
+                <div class="totals-summary">
+                    <div class="total-row">
+                        <span class="total-label">Subtotal:</span>
+                        <span class="total-value" id="subtotal-amount">$0.00</span>
+                    </div>
+                    <div class="total-row">
+                        <span class="total-label">Tax Amount:</span>
+                        <span class="total-value" id="tax-amount">$0.00</span>
+                    </div>
+                    <div class="total-row">
+                        <span class="total-label">Discount Amount:</span>
+                        <span class="total-value" id="discount-amount">$0.00</span>
+                    </div>
+                    <div class="total-row total-final">
+                        <span class="total-label">Total:</span>
+                        <span class="total-value" id="total-amount">$0.00</span>
+                        <span class="currency-label" id="currency-label">USD</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Actions Section -->
+            <section class="form-section actions-section">
+                <div class="actions-grid">
+                    <div class="history-controls">
+                        <button 
+                            type="button" 
+                            id="undo-btn" 
+                            class="btn btn-secondary"
+                            aria-label="Undo last action"
+                            disabled
+                        >
+                            ↶ Undo (<span id="undo-count">0</span>)
+                        </button>
+                        <button 
+                            type="button" 
+                            id="redo-btn" 
+                            class="btn btn-secondary"
+                            aria-label="Redo last undone action"
+                            disabled
+                        >
+                            ↷ Redo (<span id="redo-count">0</span>)
+                        </button>
+                    </div>
+                    
+                    <div class="generation-controls">
+                        <button 
+                            type="button" 
+                            id="generate-invoice-btn" 
+                            class="btn btn-primary"
+                            aria-label="Generate invoice preview"
+                        >
+                            📄 Generate Invoice
+                        </button>
+                        <button 
+                            type="button" 
+                            id="download-pdf-btn" 
+                            class="btn btn-success"
+                            aria-label="Download PDF"
+                            disabled
+                        >
+                            💾 Download PDF
+                        </button>
+                        <a 
+                            href="editor.html" 
+                            class="btn btn-outline"
+                            id="open-editor-btn"
+                            aria-label="Open advanced editor"
+                        >
+                            ✏️ Open Editor
+                        </a>
+                    </div>
+                </div>
+            </section>
+        </form>
+    </main>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="toast" role="alert" aria-live="polite"></div>
+
+    <!-- Modals -->
+    <div id="history-modal" class="modal" role="dialog" aria-labelledby="history-title" aria-hidden="true">
+        <div class="modal-backdrop"></div>
+        <div class="modal-content">
+            <h2 id="history-title">Invoice History</h2>
+            <div id="history-list" class="history-list">
+                <!-- History items will be loaded here -->
+            </div>
+            <button type="button" class="btn btn-secondary" onclick="closeModal('history-modal')">
+                Close
+            </button>
+        </div>
+    </div>
+
+    <div id="clients-modal" class="modal" role="dialog" aria-labelledby="clients-title" aria-hidden="true">
+        <div class="modal-backdrop"></div>
+        <div class="modal-content">
+            <h2 id="clients-title">Client Management</h2>
+            <div id="clients-list" class="clients-list">
+                <!-- Clients will be loaded here -->
+            </div>
+            <button type="button" class="btn btn-secondary" onclick="closeModal('clients-modal')">
+                Close
+            </button>
+        </div>
+    </div>
+
+    <div id="templates-modal" class="modal" role="dialog" aria-labelledby="templates-title" aria-hidden="true">
+        <div class="modal-backdrop"></div>
+        <div class="modal-content">
+            <h2 id="templates-title">Invoice Templates</h2>
+            <div id="templates-list" class="templates-list">
+                <!-- Templates will be loaded here -->
+            </div>
+            <button type="button" class="btn btn-secondary" onclick="closeModal('templates-modal')">
+                Close
+            </button>
+        </div>
+    </div>
+
+    <div id="marketplace-modal" class="modal" role="dialog" aria-labelledby="marketplace-title" aria-hidden="true">
+        <div class="modal-backdrop"></div>
+        <div class="modal-content">
+            <h2 id="marketplace-title">Template Marketplace</h2>
+            <div id="marketplace-list" class="marketplace-list">
+                <!-- Marketplace items will be loaded here -->
+            </div>
+            <button type="button" class="btn btn-secondary" onclick="closeModal('marketplace-modal')">
+                Close
+            </button>
+        </div>
+    </div>
+
+    <div id="pricing-modal" class="modal" role="dialog" aria-labelledby="pricing-title" aria-hidden="true">
+        <div class="modal-backdrop"></div>
+        <div class="modal-content pricing-content">
+            <h2 id="pricing-title">Buy Generations</h2>
+            <div class="pricing-grid">
+                <div class="pricing-card">
+                    <h3>Starter Pack</h3>
+                    <div class="price">$9.99</div>
+                    <ul>
+                        <li>50 Normal Generations</li>
+                        <li>10 AI Generations</li>
+                    </ul>
+                    <button class="btn btn-primary" data-package="starter">Buy Pack</button>
+                </div>
+                <div class="pricing-card featured">
+                    <h3>Professional Pack</h3>
+                    <div class="price">$19.99</div>
+                    <ul>
+                        <li>150 Normal Generations</li>
+                        <li>50 AI Generations</li>
+                    </ul>
+                    <button class="btn btn-primary" data-package="professional">Buy Pack</button>
+                </div>
+                <div class="pricing-card">
+                    <h3>Enterprise Pack</h3>
+                    <div class="price">$49.99</div>
+                    <ul>
+                        <li>500 Normal Generations</li>
+                        <li>200 AI Generations</li>
+                    </ul>
+                    <button class="btn btn-primary" data-package="enterprise">Buy Pack</button>
+                </div>
+            </div>
+            <button type="button" class="btn btn-secondary" onclick="closeModal('pricing-modal')">
+                Close
+            </button>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

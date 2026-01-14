@@ -1,0 +1,204 @@
+[
+  {
+    "id": "user_moqbpkg4",
+    "email": "test@example.com",
+    "token": "tok_tojwx9sv8jd",
+    "created_at": "2026-01-08T20:28:59.137Z"
+  },
+  {
+    "id": "user_v3sgc9mo",
+    "email": "test@example.com",
+    "token": "tok_kbzpsjik5ma",
+    "created_at": "2026-01-08T20:30:54.205Z"
+  },
+  {
+    "id": "user_hps2q4ds",
+    "email": "test@example.com",
+    "token": "tok_udf4mdpqqw",
+    "created_at": "2026-01-08T20:32:09.089Z"
+  },
+  {
+    "id": "user_j6cqtkgx",
+    "email": "test@example.com",
+    "token": "tok_hkhwgfj55f",
+    "created_at": "2026-01-09T09:31:38.673Z"
+  },
+  {
+    "id": "user_g46a17gc",
+    "email": "test@example.com",
+    "token": "tok_nhe240qbcbo",
+    "created_at": "2026-01-09T09:31:59.696Z"
+  },
+  {
+    "id": "user_gemzvk6i",
+    "email": "demo+oxa6bm@example.com",
+    "token": "tok_47j9b6ailn3",
+    "created_at": "2026-01-09T09:35:59.976Z"
+  },
+  {
+    "id": "user_msr8a3p2",
+    "email": "test@example.com",
+    "token": "tok_24ovawyv0ze",
+    "created_at": "2026-01-09T09:36:04.864Z"
+  },
+  {
+    "id": "user_i35chb5o",
+    "email": "test@example.com",
+    "token": "tok_5nzhypbapj6",
+    "created_at": "2026-01-09T09:41:51.622Z"
+  },
+  {
+    "id": "user_kp25q2r5",
+    "email": "test@example.com",
+    "token": "tok_bw4v6afb26e",
+    "created_at": "2026-01-09T09:43:57.985Z"
+  },
+  {
+    "id": "user_yb0lcrfm",
+    "email": "demo+fto1ou@example.com",
+    "token": "tok_46hbkii43h4",
+    "created_at": "2026-01-09T09:44:59.679Z"
+  },
+  {
+    "id": "user_ap27kcmf",
+    "email": "demo+upofd8@example.com",
+    "token": "tok_y4shjrqu2v",
+    "created_at": "2026-01-09T09:45:57.241Z"
+  },
+  {
+    "id": "user_8f1g1x23",
+    "email": "test@example.com",
+    "token": "tok_2ncd9z1crtl",
+    "created_at": "2026-01-09T10:02:16.755Z"
+  },
+  {
+    "id": "user_uggcrkkc",
+    "email": "test@example.com",
+    "token": "tok_m31ave7l07g",
+    "created_at": "2026-01-09T10:35:32.750Z"
+  },
+  {
+    "id": "user_nl1123pk",
+    "email": "test@example.com",
+    "token": "tok_gy16kcnxmh",
+    "created_at": "2026-01-09T11:05:36.298Z"
+  },
+  {
+    "id": "user_sduml7s8",
+    "email": "test@example.com",
+    "token": "tok_a1mypib52pv",
+    "created_at": "2026-01-09T11:11:43.226Z"
+  },
+  {
+    "id": "user_88f63atl",
+    "email": "test@example.com",
+    "token": "tok_d77u1p38obk",
+    "created_at": "2026-01-09T11:15:43.262Z"
+  },
+  {
+    "id": "user_6j6nps0z",
+    "email": "test@example.com",
+    "token": "tok_99qbgftfmno",
+    "created_at": "2026-01-09T11:16:15.892Z"
+  },
+  {
+    "id": "user_veo8uon9",
+    "email": "test@example.com",
+    "token": "tok_wccgnwarcvj",
+    "created_at": "2026-01-09T11:17:09.909Z"
+  },
+  {
+    "id": "user_qacluthw",
+    "email": "demo+bw7yj9@example.com",
+    "token": "tok_o9xcdufa0y9",
+    "created_at": "2026-01-09T14:49:41.147Z"
+  },
+  {
+    "id": "user_9n9awvgq",
+    "email": "demo+l5g1gd@example.com",
+    "token": "tok_bxztjots10c",
+    "created_at": "2026-01-09T16:04:41.263Z"
+  },
+  {
+    "id": "user_jpbqvnun",
+    "email": "demo+wg1l0s@example.com",
+    "token": "tok_lhd05a1z45r",
+    "created_at": "2026-01-09T16:04:47.926Z"
+  },
+  {
+    "id": "user_76oktsjx",
+    "email": "demo+xmw6e7@example.com",
+    "token": "tok_117jw661fuyn",
+    "created_at": "2026-01-09T16:12:25.358Z"
+  },
+  {
+    "id": "user_dym7e6kv",
+    "email": "demo+j9k1xd@example.com",
+    "token": "tok_6tz39i6cacu",
+    "created_at": "2026-01-10T05:48:16.423Z"
+  },
+  {
+    "id": "user_y9z2ixt7",
+    "email": "demo+r98ma4@example.com",
+    "token": "tok_dp6bsxh4j4m",
+    "created_at": "2026-01-10T06:19:03.733Z"
+  },
+  {
+    "id": "user_p1zd17qh",
+    "email": "user@example.com",
+    "token": "tok_hf60kxoccrj",
+    "created_at": "2026-01-10T14:37:16.492Z",
+    "normalGenerations": 49
+  },
+  {
+    "id": "user_uuu93b3t",
+    "email": "user@example.com",
+    "token": "tok_kcspuc6oro",
+    "created_at": "2026-01-10T14:39:10.413Z",
+    "normalGenerations": 49
+  },
+  {
+    "id": "user_06ty93ip",
+    "email": "user@example.com",
+    "token": "tok_f4ss90vuq0i",
+    "created_at": "2026-01-13T10:16:59.070Z",
+    "subscription": {
+      "planType": "basic",
+      "name": "Basic Plan",
+      "price": 9.99,
+      "generations": 100,
+      "monthlyGenerations": 100,
+      "startDate": "2026-01-14T08:52:53.231Z",
+      "monthsGranted": 1,
+      "stripeSessionId": "cs_test_a1BAoxCvC3QTQJmMQdSqdbRgOelwHerIhw0KC7uc88fbXdArxnHzfmlpX3",
+      "stripeSubscriptionId": "sub_1SpPosD5hVX9n0TKXcSUn947"
+    },
+    "watermarkFreeGenerations": 0,
+    "creditedSessions": [
+      "cs_test_a1fWs4F1eaizFihXd7GmCko83SYyH3xvGSHpOH3eXUWUSuqmTtfjdOf361"
+    ],
+    "normalGenerations": 1441
+  },
+  {
+    "id": "user_igl2t1cp",
+    "email": "user@example.com",
+    "token": "tok_r6b5tklxmc",
+    "created_at": "2026-01-14T09:12:31.503Z",
+    "creditedSessions": [
+      "cs_test_a1HJf2PE1J0gZn2W5Tblfq7KJvGc8yzASc77I1uPpc3mgqKgvRsW355dR3"
+    ],
+    "normalGenerations": 147,
+    "subscription": null,
+    "watermarkFreeGenerations": 0
+  },
+  {
+    "id": "user_itac8hyu",
+    "email": "user@example.com",
+    "token": "tok_hqd2ob6dc4",
+    "created_at": "2026-01-14T15:54:57.750Z",
+    "creditedSessions": [
+      "cs_test_a1gByeofxFLfJHlxOH5J4cJuoicWWaygD8ccehZfkScRPUoxW35lpmW09v"
+    ],
+    "normalGenerations": 49
+  }
+]

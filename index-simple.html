@@ -1,0 +1,912 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Invoice Generator</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #f5f5f5;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header h1 {
+            color: #2563eb;
+            font-size: 24px;
+        }
+
+        .generations {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+        }
+
+        .generation-count {
+            background: #f8f9fa;
+            padding: 10px 15px;
+            border-radius: 6px;
+            font-weight: bold;
+        }
+
+        .buy-btn {
+            background: #2563eb;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .buy-btn:hover {
+            background: #1d4ed8;
+        }
+
+        .form-section {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .form-section h2 {
+            margin-bottom: 15px;
+            color: #333;
+            border-bottom: 2px solid #2563eb;
+            padding-bottom: 5px;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group label {
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #555;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #2563eb;
+            box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.2);
+        }
+
+        .required {
+            color: #dc2626;
+        }
+
+        .error {
+            border-color: #dc2626 !important;
+            background: #fef2f2;
+        }
+
+        .error-message {
+            color: #dc2626;
+            font-size: 12px;
+            margin-top: 5px;
+        }
+
+        .items-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+
+        .items-table th,
+        .items-table td {
+            padding: 10px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .items-table th {
+            background: #f8f9fa;
+            font-weight: bold;
+        }
+
+        .items-table input {
+            width: 100%;
+            padding: 5px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        .btn {
+            background: #2563eb;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            margin: 5px;
+        }
+
+        .btn:hover {
+            background: #1d4ed8;
+        }
+
+        .btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+        }
+
+        .btn-secondary:hover {
+            background: #545b62;
+        }
+
+        .btn-success {
+            background: #16a34a;
+        }
+
+        .btn-success:hover {
+            background: #15803d;
+        }
+
+        .actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 20px;
+        }
+
+        .totals {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 6px;
+            margin-top: 15px;
+        }
+
+        .total-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+
+        .total-row.final {
+            font-weight: bold;
+            font-size: 18px;
+            border-top: 2px solid #2563eb;
+            padding-top: 10px;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+        }
+
+        .modal-content {
+            background: white;
+            margin: 10% auto;
+            padding: 20px;
+            width: 90%;
+            max-width: 500px;
+            border-radius: 8px;
+        }
+
+        .pricing-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .pricing-card {
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .pricing-card.selected {
+            border-color: #2563eb;
+            background: #f0f7ff;
+        }
+
+        .price {
+            font-size: 24px;
+            font-weight: bold;
+            color: #2563eb;
+            margin: 10px 0;
+        }
+
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            padding: 15px 20px;
+            border-radius: 6px;
+            color: white;
+            font-weight: bold;
+            z-index: 2000;
+            display: none;
+        }
+
+        .toast.success {
+            background: #16a34a;
+        }
+
+        .toast.error {
+            background: #dc2626;
+        }
+
+        .toast.show {
+            display: block;
+        }
+
+        @media (max-width: 768px) {
+            .header {
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .actions {
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .items-table {
+                font-size: 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <h1>Invoice Generator</h1>
+            <div class="generations">
+                <div class="generation-count">Normal: <span id="normal-count">0</span></div>
+                <div class="generation-count">AI: <span id="ai-count">0</span></div>
+                <button class="buy-btn" onclick="showPricing()">Buy Generations</button>
+            </div>
+        </header>
+
+        <form id="invoice-form">
+            <!-- Business Information -->
+            <section class="form-section">
+                <h2>Business Information</h2>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="business-name">Business Name <span class="required">*</span></label>
+                        <input type="text" id="business-name" required>
+                        <div class="error-message" id="business-name-error"></div>
+                    </div>
+                    <div class="form-group">
+                        <label for="business-email">Business Email <span class="required">*</span></label>
+                        <input type="email" id="business-email" required>
+                        <div class="error-message" id="business-email-error"></div>
+                    </div>
+                    <div class="form-group">
+                        <label for="business-phone">Phone</label>
+                        <input type="tel" id="business-phone">
+                    </div>
+                    <div class="form-group">
+                        <label for="business-address">Address</label>
+                        <textarea id="business-address" rows="3"></textarea>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Client Information -->
+            <section class="form-section">
+                <h2>Client Information</h2>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="client-name">Client Name <span class="required">*</span></label>
+                        <input type="text" id="client-name" required>
+                        <div class="error-message" id="client-name-error"></div>
+                    </div>
+                    <div class="form-group">
+                        <label for="client-email">Client Email <span class="required">*</span></label>
+                        <input type="email" id="client-email" required>
+                        <div class="error-message" id="client-email-error"></div>
+                    </div>
+                    <div class="form-group">
+                        <label for="client-address">Client Address</label>
+                        <textarea id="client-address" rows="3"></textarea>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Invoice Details -->
+            <section class="form-section">
+                <h2>Invoice Details</h2>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="invoice-number">Invoice Number <span class="required">*</span></label>
+                        <input type="text" id="invoice-number" value="INV-001" required>
+                        <div class="error-message" id="invoice-number-error"></div>
+                    </div>
+                    <div class="form-group">
+                        <label for="invoice-date">Invoice Date <span class="required">*</span></label>
+                        <input type="date" id="invoice-date" required>
+                        <div class="error-message" id="invoice-date-error"></div>
+                    </div>
+                    <div class="form-group">
+                        <label for="due-date">Due Date <span class="required">*</span></label>
+                        <input type="date" id="due-date" required>
+                        <div class="error-message" id="due-date-error"></div>
+                    </div>
+                    <div class="form-group">
+                        <label for="currency">Currency</label>
+                        <select id="currency">
+                            <option value="USD">USD - US Dollar</option>
+                            <option value="EUR">EUR - Euro</option>
+                            <option value="GBP">GBP - British Pound</option>
+                        </select>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Items -->
+            <section class="form-section">
+                <h2>Invoice Items</h2>
+                <table class="items-table">
+                    <thead>
+                        <tr>
+                            <th>Description</th>
+                            <th>Quantity</th>
+                            <th>Unit Price</th>
+                            <th>Amount</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="items-tbody">
+                        <!-- Items will be added here -->
+                    </tbody>
+                </table>
+                <button type="button" class="btn btn-secondary" onclick="addItem()">+ Add Item</button>
+            </section>
+
+            <!-- Totals -->
+            <section class="form-section">
+                <h2>Totals</h2>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="tax-rate">Tax Rate (%)</label>
+                        <input type="number" id="tax-rate" min="0" max="100" step="0.01" value="0">
+                    </div>
+                    <div class="form-group">
+                        <label for="discount-rate">Discount Rate (%)</label>
+                        <input type="number" id="discount-rate" min="0" max="100" step="0.01" value="0">
+                    </div>
+                </div>
+                <div class="totals">
+                    <div class="total-row">
+                        <span>Subtotal:</span>
+                        <span id="subtotal">$0.00</span>
+                    </div>
+                    <div class="total-row">
+                        <span>Tax Amount:</span>
+                        <span id="tax-amount">$0.00</span>
+                    </div>
+                    <div class="total-row">
+                        <span>Discount Amount:</span>
+                        <span id="discount-amount">$0.00</span>
+                    </div>
+                    <div class="total-row final">
+                        <span>Total:</span>
+                        <span id="total">$0.00</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Actions -->
+            <section class="form-section">
+                <div class="actions">
+                    <div>
+                        <button type="button" class="btn btn-secondary" onclick="undo()">↶ Undo</button>
+                        <button type="button" class="btn btn-secondary" onclick="redo()">↷ Redo</button>
+                    </div>
+                    <div>
+                        <button type="button" class="btn" onclick="generateInvoice()">📄 Generate Invoice</button>
+                        <button type="button" class="btn btn-success" onclick="downloadPDF()" id="download-btn" disabled>💾 Download PDF</button>
+                    </div>
+                </div>
+            </section>
+        </form>
+    </div>
+
+    <!-- Pricing Modal -->
+    <div id="pricing-modal" class="modal">
+        <div class="modal-content">
+            <h2>Buy Generations</h2>
+            <div class="pricing-grid">
+                <div class="pricing-card" data-package="basic">
+                    <h3>Basic</h3>
+                    <div class="price">$9.99</div>
+                    <ul>
+                        <li>50 Normal Generations</li>
+                        <li>10 AI Generations</li>
+                    </ul>
+                    <button class="btn" onclick="buyPackage('basic')">Buy Now</button>
+                </div>
+                <div class="pricing-card" data-package="pro">
+                    <h3>Professional</h3>
+                    <div class="price">$19.99</div>
+                    <ul>
+                        <li>150 Normal Generations</li>
+                        <li>50 AI Generations</li>
+                    </ul>
+                    <button class="btn" onclick="buyPackage('pro')">Buy Now</button>
+                </div>
+                <div class="pricing-card" data-package="enterprise">
+                    <h3>Enterprise</h3>
+                    <div class="price">$49.99</div>
+                    <ul>
+                        <li>500 Normal Generations</li>
+                        <li>200 AI Generations</li>
+                    </ul>
+                    <button class="btn" onclick="buyPackage('enterprise')">Buy Now</button>
+                </div>
+            </div>
+            <button type="button" class="btn btn-secondary" onclick="closePricing()">Close</button>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="toast"></div>
+
+    <script>
+        // Simple Invoice Generator - No unnecessary complexity
+        let invoiceData = {
+            business: { name: '', email: '', phone: '', address: '' },
+            client: { name: '', email: '', address: '' },
+            invoice: { number: '', date: '', dueDate: '', currency: 'USD' },
+            items: [],
+            totals: { subtotal: 0, taxRate: 0, taxAmount: 0, discountRate: 0, discountAmount: 0, total: 0 }
+        };
+
+        let generations = { normal: 0, ai: 0 };
+        let history = { undo: [], redo: [] };
+        let pdfGenerated = false;
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            loadSavedData();
+            setDefaultDates();
+            addInitialItem();
+            updateDisplay();
+            setupEventListeners();
+        });
+
+        function setupEventListeners() {
+            // Form field listeners
+            const fields = ['business-name', 'business-email', 'client-name', 'client-email', 'invoice-number', 'invoice-date', 'due-date'];
+            fields.forEach(fieldId => {
+                const field = document.getElementById(fieldId);
+                if (field) {
+                    field.addEventListener('input', () => saveState());
+                    field.addEventListener('blur', () => validateField(fieldId));
+                }
+            });
+
+            // Tax and discount listeners
+            document.getElementById('tax-rate').addEventListener('input', calculateTotals);
+            document.getElementById('discount-rate').addEventListener('input', calculateTotals);
+        }
+
+        function setDefaultDates() {
+            const today = new Date().toISOString().split('T')[0];
+            const dueDate = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
+            
+            document.getElementById('invoice-date').value = today;
+            document.getElementById('due-date').value = dueDate;
+            
+            invoiceData.invoice.date = today;
+            invoiceData.invoice.dueDate = dueDate;
+        }
+
+        function addInitialItem() {
+            if (invoiceData.items.length === 0) {
+                addItem();
+            }
+        }
+
+        function addItem() {
+            saveState();
+            const item = {
+                id: Date.now(),
+                description: '',
+                quantity: 1,
+                unitPrice: 0,
+                amount: 0
+            };
+            invoiceData.items.push(item);
+            renderItems();
+            calculateTotals();
+        }
+
+        function removeItem(itemId) {
+            saveState();
+            invoiceData.items = invoiceData.items.filter(item => item.id !== itemId);
+            renderItems();
+            calculateTotals();
+        }
+
+        function updateItem(itemId, field, value) {
+            const item = invoiceData.items.find(item => item.id === itemId);
+            if (!item) return;
+
+            saveState();
+            
+            if (field === 'description') {
+                item.description = value;
+            } else if (field === 'quantity') {
+                item.quantity = Math.max(0, parseFloat(value) || 0);
+            } else if (field === 'unitPrice') {
+                item.unitPrice = Math.max(0, parseFloat(value) || 0);
+            }
+            
+            item.amount = item.quantity * item.unitPrice;
+            calculateTotals();
+        }
+
+        function renderItems() {
+            const tbody = document.getElementById('items-tbody');
+            tbody.innerHTML = '';
+            
+            invoiceData.items.forEach(item => {
+                const row = tbody.insertRow();
+                row.innerHTML = `
+                    <td><input type="text" value="${item.description}" onchange="updateItem(${item.id}, 'description', this.value)" placeholder="Service description"></td>
+                    <td><input type="number" value="${item.quantity}" min="0" onchange="updateItem(${item.id}, 'quantity', this.value)"></td>
+                    <td><input type="number" value="${item.unitPrice}" min="0" step="0.01" onchange="updateItem(${item.id}, 'unitPrice', this.value)"></td>
+                    <td>$${item.amount.toFixed(2)}</td>
+                    <td><button type="button" class="btn btn-secondary" onclick="removeItem(${item.id})">Remove</button></td>
+                `;
+            });
+        }
+
+        function calculateTotals() {
+            const subtotal = invoiceData.items.reduce((sum, item) => sum + item.amount, 0);
+            const taxRate = parseFloat(document.getElementById('tax-rate').value) || 0;
+            const discountRate = parseFloat(document.getElementById('discount-rate').value) || 0;
+            
+            const taxAmount = subtotal * (taxRate / 100);
+            const discountAmount = subtotal * (discountRate / 100);
+            const total = subtotal + taxAmount - discountAmount;
+            
+            invoiceData.totals = { subtotal, taxRate, taxAmount, discountRate, discountAmount, total };
+            
+            updateTotalsDisplay();
+        }
+
+        function updateTotalsDisplay() {
+            document.getElementById('subtotal').textContent = formatCurrency(invoiceData.totals.subtotal);
+            document.getElementById('tax-amount').textContent = formatCurrency(invoiceData.totals.taxAmount);
+            document.getElementById('discount-amount').textContent = formatCurrency(invoiceData.totals.discountAmount);
+            document.getElementById('total').textContent = formatCurrency(invoiceData.totals.total);
+        }
+
+        function validateField(fieldId) {
+            const field = document.getElementById(fieldId);
+            const errorElement = document.getElementById(fieldId + '-error');
+            
+            if (!field) return true;
+            
+            let isValid = true;
+            let errorMessage = '';
+            
+            field.classList.remove('error');
+            if (errorElement) errorElement.textContent = '';
+            
+            // Required field validation
+            if (field.hasAttribute('required') && !field.value.trim()) {
+                isValid = false;
+                errorMessage = 'This field is required';
+            }
+            
+            // Email validation
+            if (field.type === 'email' && field.value) {
+                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                if (!emailRegex.test(field.value)) {
+                    isValid = false;
+                    errorMessage = 'Please enter a valid email address';
+                }
+            }
+            
+            // Date validation
+            if (field.type === 'date' && field.value) {
+                const date = new Date(field.value);
+                const today = new Date();
+                today.setHours(0, 0, 0, 0);
+                
+                if (fieldId === 'invoice-date' && date < today) {
+                    isValid = false;
+                    errorMessage = 'Invoice date cannot be in the past';
+                }
+                
+                if (fieldId === 'due-date') {
+                    const invoiceDate = new Date(document.getElementById('invoice-date').value);
+                    if (date <= invoiceDate) {
+                        isValid = false;
+                        errorMessage = 'Due date must be after invoice date';
+                    }
+                }
+            }
+            
+            if (!isValid) {
+                field.classList.add('error');
+                if (errorElement) errorElement.textContent = errorMessage;
+            }
+            
+            return isValid;
+        }
+
+        function validateForm() {
+            const requiredFields = ['business-name', 'business-email', 'client-name', 'client-email', 'invoice-number', 'invoice-date', 'due-date'];
+            return requiredFields.every(fieldId => validateField(fieldId)) && invoiceData.items.length > 0;
+        }
+
+        function generateInvoice() {
+            if (!validateForm()) {
+                showToast('Please fix all errors before generating', 'error');
+                return;
+            }
+            
+            if (generations.normal < 1) {
+                showToast('You need at least 1 normal generation to create an invoice', 'error');
+                showPricing();
+                return;
+            }
+            
+            // Simulate generation
+            showToast('Generating invoice...', 'success');
+            
+            setTimeout(() => {
+                generations.normal--;
+                pdfGenerated = true;
+                updateDisplay();
+                saveData();
+                showToast('Invoice generated successfully!', 'success');
+                
+                document.getElementById('download-btn').disabled = false;
+            }, 2000);
+        }
+
+        function downloadPDF() {
+            if (!pdfGenerated) {
+                showToast('Please generate the invoice first', 'error');
+                return;
+            }
+            
+            try {
+                const { jsPDF } = window.jspdf;
+                const doc = new jsPDF();
+                
+                // Add content
+                doc.setFontSize(20);
+                doc.text('INVOICE', 105, 20, { align: 'center' });
+                
+                doc.setFontSize(12);
+                doc.text(`Invoice Number: ${invoiceData.invoice.number}`, 20, 40);
+                doc.text(`Date: ${invoiceData.invoice.date}`, 20, 50);
+                doc.text(`Due Date: ${invoiceData.invoice.dueDate}`, 20, 60);
+                
+                doc.text(`From: ${invoiceData.business.name}`, 20, 80);
+                doc.text(`Email: ${invoiceData.business.email}`, 20, 90);
+                
+                doc.text(`To: ${invoiceData.client.name}`, 120, 80);
+                doc.text(`Email: ${invoiceData.client.email}`, 120, 90);
+                
+                // Add items
+                let y = 120;
+                invoiceData.items.forEach(item => {
+                    doc.text(`${item.description} - Qty: ${item.quantity} - Price: $${item.unitPrice.toFixed(2)} - Amount: $${item.amount.toFixed(2)}`, 20, y);
+                    y += 10;
+                });
+                
+                // Add totals
+                y += 20;
+                doc.text(`Total: ${formatCurrency(invoiceData.totals.total)}`, 120, y);
+                
+                // Download
+                doc.save(`invoice-${invoiceData.invoice.number}.pdf`);
+                showToast('PDF downloaded successfully!', 'success');
+                
+            } catch (error) {
+                showToast('Failed to download PDF', 'error');
+            }
+        }
+
+        function saveState() {
+            history.undo.push(JSON.stringify(invoiceData));
+            if (history.undo.length > 20) history.undo.shift();
+            history.redo = [];
+        }
+
+        function undo() {
+            if (history.undo.length === 0) {
+                showToast('Nothing to undo', 'error');
+                return;
+            }
+            
+            history.redo.push(JSON.stringify(invoiceData));
+            invoiceData = JSON.parse(history.undo.pop());
+            updateDisplay();
+            showToast('Undo successful', 'success');
+        }
+
+        function redo() {
+            if (history.redo.length === 0) {
+                showToast('Nothing to redo', 'error');
+                return;
+            }
+            
+            history.undo.push(JSON.stringify(invoiceData));
+            invoiceData = JSON.parse(history.redo.pop());
+            updateDisplay();
+            showToast('Redo successful', 'success');
+        }
+
+        function showPricing() {
+            document.getElementById('pricing-modal').style.display = 'block';
+        }
+
+        function closePricing() {
+            document.getElementById('pricing-modal').style.display = 'none';
+        }
+
+        function buyPackage(packageType) {
+            const packages = {
+                basic: { normal: 50, ai: 10, price: 9.99 },
+                pro: { normal: 150, ai: 50, price: 19.99 },
+                enterprise: { normal: 500, ai: 200, price: 49.99 }
+            };
+            
+            const pkg = packages[packageType];
+            if (pkg) {
+                // Simulate payment
+                if (confirm(`Buy ${packageType} package for $${pkg.price}?`)) {
+                    generations.normal += pkg.normal;
+                    generations.ai += pkg.ai;
+                    updateDisplay();
+                    saveData();
+                    closePricing();
+                    showToast(`Successfully purchased ${packageType} package! +${pkg.normal} normal, +${pkg.ai} AI generations`, 'success');
+                }
+            }
+        }
+
+        function updateDisplay() {
+            // Update generation counts
+            document.getElementById('normal-count').textContent = generations.normal;
+            document.getElementById('ai-count').textContent = generations.ai;
+            
+            // Update form fields
+            document.getElementById('business-name').value = invoiceData.business.name || '';
+            document.getElementById('business-email').value = invoiceData.business.email || '';
+            document.getElementById('business-phone').value = invoiceData.business.phone || '';
+            document.getElementById('business-address').value = invoiceData.business.address || '';
+            
+            document.getElementById('client-name').value = invoiceData.client.name || '';
+            document.getElementById('client-email').value = invoiceData.client.email || '';
+            document.getElementById('client-address').value = invoiceData.client.address || '';
+            
+            document.getElementById('invoice-number').value = invoiceData.invoice.number || '';
+            document.getElementById('invoice-date').value = invoiceData.invoice.date || '';
+            document.getElementById('due-date').value = invoiceData.invoice.dueDate || '';
+            document.getElementById('currency').value = invoiceData.invoice.currency || 'USD';
+            
+            document.getElementById('tax-rate').value = invoiceData.totals.taxRate || 0;
+            document.getElementById('discount-rate').value = invoiceData.totals.discountRate || 0;
+            
+            renderItems();
+            calculateTotals();
+        }
+
+        function formatCurrency(amount) {
+            return new Intl.NumberFormat('en-US', {
+                style: 'currency',
+                currency: invoiceData.invoice.currency || 'USD'
+            }).format(amount);
+        }
+
+        function showToast(message, type = 'success') {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.className = `toast ${type} show`;
+            
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+
+        function saveData() {
+            localStorage.setItem('invoice-data', JSON.stringify(invoiceData));
+            localStorage.setItem('generations', JSON.stringify(generations));
+        }
+
+        function loadSavedData() {
+            const savedInvoice = localStorage.getItem('invoice-data');
+            const savedGenerations = localStorage.getItem('generations');
+            
+            if (savedInvoice) {
+                try {
+                    invoiceData = JSON.parse(savedInvoice);
+                } catch (e) {
+                    console.error('Failed to load saved invoice data');
+                }
+            }
+            
+            if (savedGenerations) {
+                try {
+                    generations = JSON.parse(savedGenerations);
+                } catch (e) {
+                    console.error('Failed to load saved generations');
+                }
+            }
+        }
+
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            const modal = document.getElementById('pricing-modal');
+            if (event.target === modal) {
+                closePricing();
+            }
+        }
+    </script>
+</body>
+</html>

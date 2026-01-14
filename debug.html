@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DEBUG - Button Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; background: #f5f5f5; }
+        .debug-container { max-width: 800px; margin: 0 auto; background: white; padding: 20px; border-radius: 8px; }
+        .debug-section { margin: 20px 0; padding: 15px; border: 1px solid #ddd; border-radius: 5px; }
+        .debug-button { background: #dc3545; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; margin: 5px; }
+        .debug-button:hover { background: #c82333; }
+        .result { margin: 10px 0; padding: 10px; border-radius: 4px; font-family: monospace; white-space: pre-wrap; }
+        .result.success { background: #d4edda; color: #155724; }
+        .result.error { background: #f8d7da; color: #721c24; }
+        .back-btn { background: #6c757d; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; text-decoration: none; margin-bottom: 20px; display: inline-block; }
+        .back-btn:hover { background: #545b62; }
+    </style>
+</head>
+<body>
+    <div class="debug-container">
+        <a href="index.html" class="back-btn">← Back to Invoice Generator</a>
+        <h1>🔍 DEBUG - Button Issues</h1>
+        <p>This will help identify why buttons aren't working.</p>
+        
+        <div class="debug-section">
+            <h3>🚨 Quick Debug Test</h3>
+            <button class="debug-button" onclick="quickDebug()">Run Quick Debug</button>
+            <div id="quick-result"></div>
+        </div>
+        
+        <div class="debug-section">
+            <h3>🔍 Element Check</h3>
+            <button class="debug-button" onclick="checkElements()">Check Elements</button>
+            <div id="elements-result"></div>
+        </div>
+        
+        <div class="debug-section">
+            <h3>📜 Script Loading</h3>
+            <button class="debug-button" onclick="checkScript()">Check Script Loading</button>
+            <div id="script-result"></div>
+        </div>
+        
+        <div class="debug-section">
+            <h3>🖱️ Event Listeners</h3>
+            <button class="debug-button" onclick="checkEventListeners()">Check Event Listeners</button>
+            <div id="listeners-result"></div>
+        </div>
+        
+        <div class="debug-section">
+            <h3>⚡ Manual Button Test</h3>
+            <button class="debug-button" onclick="manualButtonTest()">Test Buttons Manually</button>
+            <div id="manual-result"></div>
+        </div>
+    </div>
+
+    <script>
+        function showResult(elementId, message, isSuccess = true) {
+            const element = document.getElementById(elementId);
+            element.innerHTML = `<div class="result ${isSuccess ? 'success' : 'error'}">${message}</div>`;
+        }
+
+        function quickDebug() {
+            let output = "QUICK DEBUG RESULTS:\n\n";
+            
+            // Check if we're on the main page
+            if (window.location.href.includes('index.html')) {
+                output += "✅ On main page (index.html)\n";
+                
+                // Check for key elements
+                const detectBtn = document.getElementById('detect-location');
+                const generateBtn = document.getElementById('generate-pdf');
+                const downloadBtn = document.getElementById('save-local');
+                
+                output += `Detect button: ${detectBtn ? '✅ Found' : '❌ Not found'}\n`;
+                output += `Generate button: ${generateBtn ? '✅ Found' : '❌ Not found'}\n`;
+                output += `Download button: ${downloadBtn ? '✅ Found' : '❌ Not found'}\n`;
+                
+                // Check if buttons have click handlers
+                if (detectBtn) {
+                    const hasListener = detectBtn.onclick || (window.getEventListeners && window.getEventListeners(detectBtn)?.click?.length > 0);
+                    output += `Detect button has listener: ${hasListener ? '✅ Yes' : '❌ No'}\n`;
+                }
+                
+                if (generateBtn) {
+                    const hasListener = generateBtn.onclick || (window.getEventListeners && window.getEventListeners(generateBtn)?.click?.length > 0);
+                    output += `Generate button has listener: ${hasListener ? '✅ Yes' : '❌ No'}\n`;
+                }
+                
+                if (downloadBtn) {
+                    const hasListener = downloadBtn.onclick || (window.getEventListeners && window.getEventListeners(downloadBtn)?.click?.length > 0);
+                    output += `Download button has listener: ${hasListener ? '✅ Yes' : '❌ No'}\n`;
+                }
+                
+                // Check for console errors
+                output += "\n📋 CONSOLE CHECK:\n";
+                output += "Open browser console (F12) to see if there are any JavaScript errors\n";
+                output += "Look for red error messages when loading the page\n";
+                
+            } else {
+                output += "❌ Not on main page. Please run this on index.html\n";
+            }
+            
+            showResult('quick-result', output);
+        }
+
+        function checkElements() {
+            let output = "ELEMENT CHECK RESULTS:\n\n";
+            
+            const elements = [
+                { id: 'detect-location', name: 'Auto-detect Tax' },
+                { id: 'generate-pdf', name: 'Generate PDF' },
+                { id: 'save-local', name: 'Download PDF' },
+                { id: 'business-name', name: 'Business Name' },
+                { id: 'client-name', name: 'Client Name' },
+                { id: 'client-email', name: 'Client Email' },
+                { id: 'tax', name: 'Tax Input' },
+                { id: 'total-amount', name: 'Total Amount' }
+            ];
+            
+            elements.forEach(elem => {
+                const element = document.getElementById(elem.id);
+                if (element) {
+                    output += `✅ ${elem.name}: Found (${element.tagName.toLowerCase()})\n`;
+                    if (element.value !== undefined) {
+                        output += `   Value: "${element.value}"\n`;
+                    } else if (element.innerText !== undefined) {
+                        output += `   Text: "${element.innerText}"\n`;
+                    }
+                } else {
+                    output += `❌ ${elem.name}: NOT FOUND\n`;
+                }
+            });
+            
+            showResult('elements-result', output);
+        }
+
+        function checkScript() {
+            let output = "SCRIPT LOADING CHECK:\n\n";
+            
+            // Check if script.js is loaded
+            const scripts = document.getElementsByTagName('script');
+            let scriptFound = false;
+            
+            for (let script of scripts) {
+                if (script.src.includes('script.js')) {
+                    scriptFound = true;
+                    output += `✅ script.js found: ${script.src}\n`;
+                    break;
+                }
+            }
+            
+            if (!scriptFound) {
+                output += "❌ script.js NOT FOUND in page\n";
+                output += "Check if &lt;script src=\"script.js\"&gt;&lt;/script&gt; is in index.html\n";
+            }
+            
+            // Check for key functions
+            const functions = [
+                'detectLocationAndSetTax',
+                'generatePDF',
+                'downloadPdf',
+                'buildInvoice',
+                'showToast'
+            ];
+            
+            output += "\n📋 FUNCTION CHECK:\n";
+            functions.forEach(func => {
+                if (typeof window[func] === 'function') {
+                    output += `✅ ${func}: Function exists\n`;
+                } else {
+                    output += `❌ ${func}: Function NOT found\n`;
+                }
+            });
+            
+            showResult('script-result', output);
+        }
+
+        function checkEventListeners() {
+            let output = "EVENT LISTENER CHECK:\n\n";
+            
+            const buttons = [
+                { id: 'detect-location', name: 'Auto-detect Tax' },
+                { id: 'generate-pdf', name: 'Generate PDF' },
+                { id: 'save-local', name: 'Download PDF' }
+            ];
+            
+            buttons.forEach(btn => {
+                const element = document.getElementById(btn.id);
+                if (element) {
+                    output += `${btn.name}:\n`;
+                    
+                    // Check onclick
+                    if (element.onclick) {
+                        output += `  ✅ Has onclick handler\n`;
+                    } else {
+                        output += `  ❌ No onclick handler\n`;
+                    }
+                    
+                    // Check addEventListener (if getEventListeners is available)
+                    try {
+                        const listeners = getEventListeners?.(element);
+                        if (listeners && listeners.click) {
+                            output += `  ✅ Has ${listeners.click.length} click listener(s)\n`;
+                        } else {
+                            output += `  ❌ No click listeners found\n`;
+                        }
+                    } catch (e) {
+                        output += `  ⚠️ Cannot check listeners (getEventListeners not available)\n`;
+                    }
+                    
+                    output += "\n";
+                } else {
+                    output += `❌ ${btn.name}: Button not found\n\n`;
+                }
+            });
+            
+            showResult('listeners-result', output);
+        }
+
+        function manualButtonTest() {
+            let output = "MANUAL BUTTON TEST:\n\n";
+            
+            // Test detect-location button
+            const detectBtn = document.getElementById('detect-location');
+            if (detectBtn) {
+                output += "📍 Testing Auto-detect Tax button...\n";
+                try {
+                    detectBtn.click();
+                    output += "✅ Click executed without errors\n";
+                    output += "📋 Check if location prompt appears\n";
+                } catch (error) {
+                    output += `❌ Click failed: ${error.message}\n`;
+                }
+            } else {
+                output += "❌ Auto-detect Tax button not found\n";
+            }
+            
+            output += "\n";
+            
+            // Test generate-pdf button
+            const generateBtn = document.getElementById('generate-pdf');
+            if (generateBtn) {
+                output += "📄 Testing Generate PDF button...\n";
+                try {
+                    generateBtn.click();
+                    output += "✅ Click executed without errors\n";
+                    output += "📋 Check for validation messages or PDF generation\n";
+                } catch (error) {
+                    output += `❌ Click failed: ${error.message}\n`;
+                }
+            } else {
+                output += "❌ Generate PDF button not found\n";
+            }
+            
+            output += "\n";
+            
+            // Test save-local button
+            const downloadBtn = document.getElementById('save-local');
+            if (downloadBtn) {
+                output += "💾 Testing Download PDF button...\n";
+                try {
+                    downloadBtn.click();
+                    output += "✅ Click executed without errors\n";
+                    output += "📋 Check for validation messages or PDF download\n";
+                } catch (error) {
+                    output += `❌ Click failed: ${error.message}\n`;
+                }
+            } else {
+                output += "❌ Download PDF button not found\n";
+            }
+            
+            output += "\n📋 NEXT STEPS:\n";
+            output += "1. Check browser console (F12) for any JavaScript errors\n";
+            output += "2. Look for red error messages when clicking buttons\n";
+            output += "3. Make sure script.js is loaded properly\n";
+            output += "4. Check if any browser extensions are blocking scripts\n";
+            
+            showResult('manual-result', output);
+        }
+
+        // Auto-run quick debug when page loads
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                quickDebug();
+            }, 1000);
+        });
+    </script>
+</body>
+</html>

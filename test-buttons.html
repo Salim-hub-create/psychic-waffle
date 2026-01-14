@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Button Functionality Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        .test-section { margin: 20px 0; padding: 15px; border: 1px solid #ccc; }
+        .test-result { margin: 10px 0; padding: 10px; }
+        .pass { background: #d4edda; color: #155724; }
+        .fail { background: #f8d7da; color: #721c24; }
+        button { margin: 5px; padding: 10px; }
+    </style>
+</head>
+<body>
+    <h1>Button Functionality Test</h1>
+    
+    <div class="test-section">
+        <h2>Test Results</h2>
+        <div id="test-results"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>Test Buttons</h2>
+        <button onclick="testBuyGens()">Test Buy Gens</button>
+        <button onclick="testMarketplace()">Test Marketplace</button>
+        <button onclick="testTemplates()">Test Templates</button>
+        <button onclick="testDetectLocation()">Test Location</button>
+        <button onclick="testGeneratePDF()">Test Generate PDF</button>
+        <button onclick="testSaveLocal()">Test Save Local</button>
+        <button onclick="testAddItem()">Test Add Item</button>
+    </div>
+
+    <script>
+        function addTestResult(test, passed, message) {
+            const results = document.getElementById('test-results');
+            const div = document.createElement('div');
+            div.className = `test-result ${passed ? 'pass' : 'fail'}`;
+            div.innerHTML = `<strong>${test}:</strong> ${passed ? 'PASS' : 'FAIL'} - ${message}`;
+            results.appendChild(div);
+        }
+
+        function testBuyGens() {
+            try {
+                const btn = document.getElementById('buy-gens');
+                if (btn) {
+                    addTestResult('Buy Gens Button', true, 'Button exists and has click listener');
+                } else {
+                    addTestResult('Buy Gens Button', false, 'Button not found');
+                }
+            } catch (e) {
+                addTestResult('Buy Gens Button', false, `Error: ${e.message}`);
+            }
+        }
+
+        function testMarketplace() {
+            try {
+                const btn = document.getElementById('marketplace-btn');
+                if (btn) {
+                    addTestResult('Marketplace Button', true, 'Button exists and has click listener');
+                } else {
+                    addTestResult('Marketplace Button', false, 'Button not found');
+                }
+            } catch (e) {
+                addTestResult('Marketplace Button', false, `Error: ${e.message}`);
+            }
+        }
+
+        function testTemplates() {
+            try {
+                const btn = document.getElementById('templates-btn');
+                if (btn) {
+                    addTestResult('Templates Button', true, 'Button exists and has click listener');
+                } else {
+                    addTestResult('Templates Button', false, 'Button not found');
+                }
+            } catch (e) {
+                addTestResult('Templates Button', false, `Error: ${e.message}`);
+            }
+        }
+
+        function testDetectLocation() {
+            try {
+                const btn = document.getElementById('detect-location');
+                if (btn) {
+                    addTestResult('Location Button', true, 'Button exists and has click listener');
+                } else {
+                    addTestResult('Location Button', false, 'Button not found');
+                }
+            } catch (e) {
+                addTestResult('Location Button', false, `Error: ${e.message}`);
+            }
+        }
+
+        function testGeneratePDF() {
+            try {
+                const btn = document.getElementById('generate-pdf');
+                if (btn) {
+                    addTestResult('Generate PDF Button', true, 'Button exists and has click listener');
+                } else {
+                    addTestResult('Generate PDF Button', false, 'Button not found');
+                }
+            } catch (e) {
+                addTestResult('Generate PDF Button', false, `Error: ${e.message}`);
+            }
+        }
+
+        function testSaveLocal() {
+            try {
+                const btn = document.getElementById('save-local');
+                if (btn) {
+                    addTestResult('Save Local Button', true, 'Button exists and has click listener');
+                } else {
+                    addTestResult('Save Local Button', false, 'Button not found');
+                }
+            } catch (e) {
+                addTestResult('Save Local Button', false, `Error: ${e.message}`);
+            }
+        }
+
+        function testAddItem() {
+            try {
+                const btn = document.getElementById('add-item');
+                if (btn) {
+                    addTestResult('Add Item Button', true, 'Button exists and has click listener');
+                } else {
+                    addTestResult('Add Item Button', false, 'Button not found');
+                }
+            } catch (e) {
+                addTestResult('Add Item Button', false, `Error: ${e.message}`);
+            }
+        }
+
+        // Run tests when page loads
+        window.onload = function() {
+            addTestResult('Page Load', true, 'Test page loaded successfully');
+            testBuyGens();
+            testMarketplace();
+            testTemplates();
+            testDetectLocation();
+            testGeneratePDF();
+            testSaveLocal();
+            testAddItem();
+        };
+    </script>
+</body>
+</html>

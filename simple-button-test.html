@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Button Test - Simple</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; background: #f5f5f5; }
+        .test-container { max-width: 800px; margin: 0 auto; background: white; padding: 20px; border-radius: 8px; }
+        .test-section { margin: 20px 0; padding: 15px; border: 1px solid #ddd; border-radius: 5px; }
+        .test-button { background: #007bff; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; margin: 5px; }
+        .test-button:hover { background: #0056b3; }
+        .result { margin: 10px 0; padding: 10px; border-radius: 4px; }
+        .result.success { background: #d4edda; color: #155724; }
+        .result.error { background: #f8d7da; color: #721c24; }
+        .back-btn { background: #6c757d; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; text-decoration: none; margin-bottom: 20px; display: inline-block; }
+        .back-btn:hover { background: #545b62; }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <a href="index.html" class="back-btn">← Back to Invoice Generator</a>
+        <h1>🔧 Simple Button Test</h1>
+        <p>Test the main functionality of the invoice generator buttons.</p>
+        
+        <div class="test-section">
+            <h3>📍 Auto-Detect Tax Test</h3>
+            <button class="test-button" onclick="testAutoDetectTax()">Test Auto-Detect Tax</button>
+            <div id="tax-result"></div>
+        </div>
+        
+        <div class="test-section">
+            <h3>📄 PDF Generation Test</h3>
+            <button class="test-button" onclick="testGeneratePDF()">Test Generate PDF</button>
+            <button class="test-button" onclick="testDownloadPDF()">Test Download PDF</button>
+            <div id="pdf-result"></div>
+        </div>
+        
+        <div class="test-section">
+            <h3>📝 Form Validation Test</h3>
+            <button class="test-button" onclick="testFormValidation()">Test Form Validation</button>
+            <div id="validation-result"></div>
+        </div>
+    </div>
+
+    <script>
+        function showResult(elementId, message, isSuccess = true) {
+            const element = document.getElementById(elementId);
+            element.innerHTML = `<div class="result ${isSuccess ? 'success' : 'error'}">${message}</div>`;
+        }
+
+        function testAutoDetectTax() {
+            showResult('tax-result', 'Testing auto-detect tax...', true);
+            
+            // Open main application in new window
+            const testWindow = window.open('index.html', 'taxTest', 'width=800,height=600');
+            
+            if (!testWindow) {
+                showResult('tax-result', 'Please allow popups for this test to work', false);
+                return;
+            }
+            
+            // Wait for page to load
+            setTimeout(() => {
+                try {
+                    const detectBtn = testWindow.document.getElementById('detect-location');
+                    if (detectBtn) {
+                        showResult('tax-result', '✅ Auto-detect tax button found! Clicking it now...', true);
+                        detectBtn.click();
+                        setTimeout(() => {
+                            showResult('tax-result', '✅ Auto-detect tax button clicked! Check the main window for location prompt.', true);
+                        }, 1000);
+                    } else {
+                        showResult('tax-result', '❌ Auto-detect tax button not found', false);
+                    }
+                } catch (error) {
+                    showResult('tax-result', `❌ Error: ${error.message}`, false);
+                }
+            }, 2000);
+        }
+
+        function testGeneratePDF() {
+            showResult('pdf-result', 'Testing generate PDF...', true);
+            
+            // Open main application in new window
+            const testWindow = window.open('index.html', 'pdfTest', 'width=800,height=600');
+            
+            if (!testWindow) {
+                showResult('pdf-result', 'Please allow popups for this test to work', false);
+                return;
+            }
+            
+            // Wait for page to load
+            setTimeout(() => {
+                try {
+                    const generateBtn = testWindow.document.getElementById('generate-pdf');
+                    if (generateBtn) {
+                        showResult('pdf-result', '✅ Generate PDF button found! Clicking it now...', true);
+                        generateBtn.click();
+                        setTimeout(() => {
+                            showResult('pdf-result', '✅ Generate PDF button clicked! Check console for detailed output.', true);
+                        }, 1000);
+                    } else {
+                        showResult('pdf-result', '❌ Generate PDF button not found', false);
+                    }
+                } catch (error) {
+                    showResult('pdf-result', `❌ Error: ${error.message}`, false);
+                }
+            }, 2000);
+        }
+
+        function testDownloadPDF() {
+            showResult('pdf-result', 'Testing download PDF...', true);
+            
+            // Open main application in new window
+            const testWindow = window.open('index.html', 'downloadTest', 'width=800,height=600');
+            
+            if (!testWindow) {
+                showResult('pdf-result', 'Please allow popups for this test to work', false);
+                return;
+            }
+            
+            // Wait for page to load
+            setTimeout(() => {
+                try {
+                    const downloadBtn = testWindow.document.getElementById('save-local');
+                    if (downloadBtn) {
+                        showResult('pdf-result', '✅ Download PDF button found! Clicking it now...', true);
+                        downloadBtn.click();
+                        setTimeout(() => {
+                            showResult('pdf-result', '✅ Download PDF button clicked! Check console for detailed output.', true);
+                        }, 1000);
+                    } else {
+                        showResult('pdf-result', '❌ Download PDF button not found', false);
+                    }
+                } catch (error) {
+                    showResult('pdf-result', `❌ Error: ${error.message}`, false);
+                }
+            }, 2000);
+        }
+
+        function testFormValidation() {
+            showResult('validation-result', 'Testing form validation...', true);
+            
+            // Open main application in new window
+            const testWindow = window.open('index.html', 'validationTest', 'width=800,height=600');
+            
+            if (!testWindow) {
+                showResult('validation-result', 'Please allow popups for this test to work', false);
+                return;
+            }
+            
+            // Wait for page to load
+            setTimeout(() => {
+                try {
+                    const businessName = testWindow.document.getElementById('business-name');
+                    const clientName = testWindow.document.getElementById('client-name');
+                    const clientEmail = testWindow.document.getElementById('client-email');
+                    
+                    if (businessName && clientName && clientEmail) {
+                        showResult('validation-result', '✅ All form fields found! Testing validation...', true);
+                        
+                        // Test empty validation
+                        businessName.innerText = '';
+                        clientName.innerText = '';
+                        clientEmail.value = '';
+                        
+                        setTimeout(() => {
+                            const generateBtn = testWindow.document.getElementById('generate-pdf');
+                            if (generateBtn) {
+                                generateBtn.click();
+                                setTimeout(() => {
+                                    showResult('validation-result', '✅ Validation test completed! Check for error messages in the main window.', true);
+                                }, 1000);
+                            }
+                        }, 1000);
+                    } else {
+                        showResult('validation-result', '❌ Form fields not found', false);
+                    }
+                } catch (error) {
+                    showResult('validation-result', `❌ Error: ${error.message}`, false);
+                }
+            }, 2000);
+        }
+    </script>
+</body>
+</html>

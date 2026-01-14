@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Comprehensive Invoice Generator Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; background: #f5f5f5; }
+        .test-container { max-width: 1200px; margin: 0 auto; }
+        .test-section { margin: 20px 0; padding: 20px; background: white; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        .test-section h2 { color: #0b66d1; margin-top: 0; }
+        .test-item { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid #eee; }
+        .test-item:last-child { border-bottom: none; }
+        .test-status { padding: 4px 12px; border-radius: 4px; font-size: 12px; font-weight: 600; }
+        .status-pass { background: #d4edda; color: #155724; }
+        .status-fail { background: #f8d7da; color: #721c24; }
+        .status-pending { background: #fff3cd; color: #856404; }
+        .action-btn { padding: 8px 16px; background: #0b66d1; color: white; border: none; border-radius: 4px; cursor: pointer; margin: 0 4px; }
+        .action-btn:hover { background: #0a5bc0; }
+        .iframe-container { width: 100%; height: 600px; border: 2px solid #ddd; border-radius: 8px; margin-top: 20px; }
+        .results { margin-top: 20px; padding: 15px; background: #e8f5e8; border-radius: 8px; }
+        .summary { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-top: 20px; }
+        .summary-card { padding: 15px; background: white; border-radius: 8px; text-align: center; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .summary-number { font-size: 24px; font-weight: 700; color: #0b66d1; }
+        .summary-label { font-size: 14px; color: #64748b; margin-top: 5px; }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>🧪 Comprehensive Invoice Generator Test Suite</h1>
+        
+        <div class="test-section">
+            <h2>📋 Test Results</h2>
+            <div id="test-results"></div>
+        </div>
+
+        <div class="test-section">
+            <h2>🎯 Manual Tests</h2>
+            <p>Open the invoice generator in the iframe below and perform these tests manually:</p>
+            <ol>
+                <li><strong>Template Selection:</strong> Click each template option (Modern, Professional, Detailed, Elegant)</li>
+                <li><strong>Location Detection:</strong> Click "Auto-detect Tax" button</li>
+                <li><strong>Marketplace:</strong> Open marketplace and switch between tabs</li>
+                <li><strong>Template Purchase:</strong> Try to buy a template from marketplace</li>
+                <li><strong>Example Invoices:</strong> Open templates and try example invoices</li>
+                <li><strong>Add/Remove Items:</strong> Add items and remove them</li>
+                <li><strong>PDF Generation:</strong> Try to generate PDF</li>
+                <li><strong>Save Local:</strong> Try to save invoice locally</li>
+            </ol>
+        </div>
+
+        <div class="test-section">
+            <h2>🖥️ Invoice Generator</h2>
+            <iframe src="http://localhost:3000" class="iframe-container" id="test-frame"></iframe>
+        </div>
+
+        <div class="summary" id="summary">
+            <div class="summary-card">
+                <div class="summary-number" id="pass-count">0</div>
+                <div class="summary-label">Tests Passed</div>
+            </div>
+            <div class="summary-card">
+                <div class="summary-number" id="fail-count">0</div>
+                <div class="summary-label">Tests Failed</div>
+            </div>
+            <div class="summary-card">
+                <div class="summary-number" id="total-count">0</div>
+                <div class="summary-label">Total Tests</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let testResults = [];
+        let passCount = 0;
+        let failCount = 0;
+
+        function addTestResult(test, status, message, action = '') {
+            testResults.push({ test, status, message });
+            updateTestDisplay();
+            updateSummary();
+        }
+
+        function updateTestDisplay() {
+            const resultsDiv = document.getElementById('test-results');
+            resultsDiv.innerHTML = testResults.map(result => `
+                <div class="test-item">
+                    <div>
+                        <strong>${result.test}</strong>
+                        <div style="font-size: 12px; color: #666; margin-top: 2px;">${result.message}</div>
+                    </div>
+                    <div>
+                        <span class="test-status status-${result.status}">${result.status.toUpperCase()}</span>
+                        ${result.action ? `<button class="action-btn" onclick="${result.action}">${result.action.includes('Test') ? 'Run' : 'Check'}</button>` : ''}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function updateSummary() {
+            passCount = testResults.filter(r => r.status === 'pass').length;
+            failCount = testResults.filter(r => r.status === 'fail').length;
+            const totalCount = testResults.length;
+
+            document.getElementById('pass-count').textContent = passCount;
+            document.getElementById('fail-count').textContent = failCount;
+            document.getElementById('total-count').textContent = totalCount;
+        }
+
+        // Automated tests
+        function runAutomatedTests() {
+            console.log('🚀 Starting automated tests...');
+            
+            // Test 1: Check if main page loads
+            addTestResult('Page Load', 'pending', 'Checking if invoice generator loads...');
+            
+            // Test 2: Check for essential elements
+            setTimeout(() => {
+                try {
+                    const iframe = document.getElementById('test-frame');
+                    const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+                    
+                    const essentialElements = [
+                        { id: 'buy-gens', name: 'Buy Generations Button' },
+                        { id: 'marketplace-btn', name: 'Marketplace Button' },
+                        { id: 'templates-btn', name: 'Templates Button' },
+                        { id: 'detect-location', name: 'Location Detection' },
+                        { id: 'generate-pdf', name: 'Generate PDF' },
+                        { id: 'save-local', name: 'Save Local' },
+                        { id: 'add-item', name: 'Add Item' }
+                    ];
+
+                    let foundElements = 0;
+                    let missingElements = [];
+
+                    essentialElements.forEach(element => {
+                        const el = iframeDoc.getElementById(element.id);
+                        if (el) {
+                            foundElements++;
+                        } else {
+                            missingElements.push(element.name);
+                        }
+                    });
+
+                    if (foundElements === essentialElements.length) {
+                        addTestResult('Essential Elements', 'pass', `All ${foundElements} essential elements found`);
+                    } else {
+                        addTestResult('Essential Elements', 'fail', `Missing: ${missingElements.join(', ')}`);
+                    }
+
+                    // Test 3: Check template options
+                    const templateRadios = iframeDoc.querySelectorAll('input[name="invoice-template"]');
+                    if (templateRadios.length === 4) {
+                        addTestResult('Template Options', 'pass', 'All 4 template options available');
+                    } else {
+                        addTestResult('Template Options', 'fail', `Found ${templateRadios.length} template options, expected 4`);
+                    }
+
+                    // Test 4: Check marketplace tabs
+                    const tabBtns = iframeDoc.querySelectorAll('.tab-btn');
+                    if (tabBtns.length === 3) {
+                        addTestResult('Marketplace Tabs', 'pass', 'All 3 marketplace tabs available');
+                    } else {
+                        addTestResult('Marketplace Tabs', 'fail', `Found ${tabBtns.length} tabs, expected 3`);
+                    }
+
+                    console.log('✅ Automated tests completed');
+
+                } catch (error) {
+                    addTestResult('Automated Tests', 'fail', `Error running tests: ${error.message}`);
+                }
+            }, 3000);
+        }
+
+        // Initialize tests
+        window.onload = function() {
+            addTestResult('Test Suite', 'pass', 'Comprehensive test suite loaded successfully');
+            setTimeout(runAutomatedTests, 1000);
+        };
+
+        // Manual test helpers
+        window.testTaxDetection = function() {
+            addTestResult('Tax Detection', 'pending', 'Click Auto-detect Tax button in iframe');
+        };
+
+        window.testMarketplace = function() {
+            addTestResult('Marketplace', 'pending', 'Test marketplace functionality in iframe');
+        };
+
+        window.testTemplates = function() {
+            addTestResult('Templates', 'pending', 'Test template functionality in iframe');
+        };
+
+        window.testPDFGeneration = function() {
+            addTestResult('PDF Generation', 'pending', 'Test PDF generation in iframe');
+        };
+    </script>
+</body>
+</html>
