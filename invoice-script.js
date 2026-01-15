@@ -105,7 +105,8 @@ let currentUser = null;
 let companyLogo = null; // Store uploaded logo
 
 // Backend API base URL
-const API_BASE = window.location.origin + '/api';
+// Use explicit Render URL when published; fall back to window origin for local dev.
+const API_BASE = (window.BACKEND_API_BASE && String(window.BACKEND_API_BASE).replace(/\/$/, '')) || 'https://psychic-waffle-osxi.onrender.com/api';
 
 // Initialize
 document.addEventListener('DOMContentLoaded', async function() {
@@ -3190,3 +3191,4 @@ function loadSavedData() {
         generations.watermarkFree = Number(generations.watermarkFree || 0);
     }
 }
+
